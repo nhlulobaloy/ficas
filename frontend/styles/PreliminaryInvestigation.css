@@ -1,0 +1,406 @@
+/* PreliminaryInvestigation.css - Black & White Professional */
+.preliminary-one-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 12px;
+  color: #000000;
+  background: #ffffff;
+}
+
+.session-message {
+  background: #f5f5f5;
+  border-left: 4px solid #000000;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  font-size: 11px;
+}
+
+.preliminary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #cccccc;
+  padding-bottom: 12px;
+}
+
+.preliminary-header h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.back-btn, .update-btn, .final-submit {
+  padding: 6px 12px;
+  font-size: 11px;
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.update-btn:disabled, .final-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.update-btn:hover, .final-submit:hover:not(:disabled) {
+  background: #000000;
+  color: #ffffff;
+}
+
+.preliminary-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-section {
+  border: 1px solid #cccccc;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.form-section h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #cccccc;
+}
+
+.form-section textarea,
+.form-section select,
+.form-section input {
+  width: 100%;
+  padding: 6px 8px;
+  margin-bottom: 10px;
+  border: 1px solid #cccccc;
+  background: #ffffff;
+  color: #000000;
+  font-size: 11px;
+  font-family: Tahoma, Arial, sans-serif;
+  border-radius: 2px;
+}
+
+.form-section textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.form-section textarea:focus,
+.form-section select:focus,
+.form-section input:focus {
+  outline: none;
+  border-color: #000000;
+  box-shadow: 0 0 0 1px #000000;
+}
+
+.form-section textarea:disabled,
+.form-section select:disabled,
+.form-section input:disabled {
+  background: #f5f5f5;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.submit-container {
+  grid-column: span 2;
+  margin-top: 24px;
+  text-align: center;
+}
+
+.final-submit {
+  padding: 10px 24px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+}
+
+.final-submit:hover:not(:disabled) {
+  background: #333333;
+}
+
+.access-denied-container {
+    text-align: center;
+    padding: 40px;
+    max-width: 500px;
+    margin: 50px auto;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+}
+
+.access-denied-container h2 {
+    color: #b71c1c;
+    margin-bottom: 20px;
+}
+
+.access-denied-container p {
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.access-denied-container button {
+    padding: 10px 24px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 1px;
+    cursor: pointer;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.incident-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+}
+
+.incident-number {
+    font-weight: 600;
+    color: #333;
+}
+
+.complainant-name {
+    font-style: italic;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #666;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    margin: 20px;
+}
+
+/* Confirmation Popup */
+.confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-modal {
+  background: white;
+  border-radius: 1px;
+  width: 90%;
+  max-width: 400px;
+  padding: 25px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.confirm-modal h3 {
+  color: #1a1a1a;
+  font-size: 16px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.confirm-modal p {
+  color: #666;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  letter-spacing: 0.3px;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-cancel,
+.confirm-proceed {
+  padding: 8px 20px;
+  border: 1px solid #ccc;
+  border-radius: 1px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.confirm-cancel {
+  background: #fff;
+  color: #333;
+}
+
+.confirm-cancel:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.confirm-proceed {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.confirm-proceed:hover {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+/* Submit Buttons */
+.submit-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.save-btn,
+.submit-btn {
+  padding: 10px 24px;
+  border: 1px solid #ccc;
+  border-radius: 1px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.save-btn {
+  background: #fff;
+  color: #333;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.submit-btn {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.save-btn:disabled,
+.submit-btn:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.comments-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.comments-modal {
+  width: 520px;
+  max-height: 70vh;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.comments-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #374151;
+}
+
+.comments-list {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.comment-btn {
+  color: red;
+  border: none;
+  background-color: transparent;
+
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 14px;
+  color: #333;
+}

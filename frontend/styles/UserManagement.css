@@ -1,0 +1,119 @@
+/* -------------------- */
+/* Popup Styles Only - Compact, Professional, Scrollable */
+/* -------------------- */
+
+/* Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 10px;
+}
+
+/* Content */
+.popup-content {
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 8px;
+  max-width: 450px; /* slightly wider */
+  width: 100%;
+  max-height: 80vh; /* allow vertical scroll if content too big */
+  overflow-y: auto; 
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px; /* reduce space between items */
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  color: #111;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+/* Headings */
+.popup-content h3 {
+  grid-column: 1 / -1;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px; /* smaller bottom margin */
+  text-align: center;
+}
+
+/* Paragraphs */
+.popup-content p {
+  grid-column: 1 / -1;
+  margin: 0 0 6px 0;
+  color: #4b5563;
+  font-size: 12px;
+}
+
+/* Labels */
+.popup-content label {
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 12px;
+}
+
+/* Select Fields */
+.popup-content select {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.popup-content select:focus {
+  border-color: #111;
+}
+
+/* Buttons */
+.popup-close-button,
+.popup-save-button {
+  grid-column: span 2;
+  padding: 8px 0;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 12px;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.popup-close-button {
+  background: #f5f5f5;
+  color: #111;
+}
+
+.popup-close-button:hover {
+  background: #e0e0e0;
+}
+
+.popup-save-button {
+  background: #111;
+  color: #fff;
+}
+
+.popup-save-button:hover {
+  background: #333;
+}
+
+/* Responsive popup */
+@media (max-width: 480px) {
+  .popup-content {
+    grid-template-columns: 1fr;
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+}

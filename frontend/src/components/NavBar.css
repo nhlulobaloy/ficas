@@ -1,0 +1,252 @@
+/* NavBar.css - FIXED */
+.dash-dashboard * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* CHANGE THIS - REMOVE BACKGROUND AND HEIGHT */
+.dash-dashboard {
+  font-family: Tahoma, Segoe UI, Arial, sans-serif;
+  /* REMOVE THIS LINE: background: #f4f6f9; */
+  /* REMOVE THIS LINE: min-height: 100vh; */
+  color: #1f2937;
+  font-size: 12px;
+  height: auto; /* ADD THIS */
+}
+
+.dash-dashboard-header {
+  border-bottom: 1px solid #cfd6dd;
+}
+
+.dash-header-top {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #163a5f;
+  color: #ffffff;
+}
+
+.dash-system-brand h1 {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.dash-company-name {
+  font-size: 10px;
+  color: #ffffff;
+}
+
+.dash-main-navigation {
+  background: #163a5f;
+  border-top: 1px solid #102a45;
+}
+
+.dash-nav-container {
+  display: flex;
+  justify-content: center;
+}
+
+.dash-nav-link,
+.dash-nav-link:focus,
+.dash-nav-link:active {
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.dash-nav-link:hover {
+  background: #1f4f82;
+}
+
+.dash-user-info-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dash-logged-in-as {
+  font-size: 9px;
+  color: #d1d5db;
+}
+
+.dash-user-name {
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.dash-control-btn,
+.dash-menu-toggle {
+  font-size: 10px;
+  padding: 3px 6px;
+  background: #eef2f6;
+  border: 1px solid #cfd6dd;
+  cursor: pointer;
+}
+
+.dash-control-btn:hover,
+.dash-menu-toggle:hover {
+  background: #e2e8f0;
+}
+
+.dash-dropdown-container {
+  position: relative;
+}
+
+.dash-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #ffffff;
+  border: 1px solid #cfd6dd;
+  min-width: 140px;
+  z-index: 1000;
+}
+
+.dash-dropdown-item {
+  font-size: 10px;
+  padding: 5px 8px;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dash-dropdown-item:hover {
+  background: #f1f5f9;
+}
+
+.dash-dropdown-item.dash-logout {
+  color: #b91c1c;
+}
+
+.dash-dropdown-divider {
+  height: 1px;
+  background: #cfd6dd;
+}
+
+/* DELETE ALL BELOW THIS LINE - NOT FOR NAVBAR */
+.dash-dashboard-content,
+.dash-rate-section,
+.dash-rate-card,
+.dash-star-rating,
+.dash-feedback-input,
+.dash-submit-btn,
+.dash-login-screen,
+.dash-login-container,
+.dash-login-card,
+.dash-system-title,
+.dash-login-form,
+.dash-input-group,
+.dash-login-btn {
+  display: none !important;
+}
+
+/* Buttons.css */
+.home-button,
+.back-button {
+  position: relative; /* Not fixed/absolute */
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid #cfd6dd;
+  background: #eef2f6;
+  color: #111111;
+  cursor: pointer;
+  border-radius: 2px;
+  margin: 8px 4px;
+  z-index: 1;
+}
+
+.home-button:hover,
+.back-button:hover {
+  background: #e2e8f0;
+  border-color: #111111;
+}
+
+/* Position them relative to content */
+.home-button {
+  float: left;
+}
+
+.back-button {
+  float: left;
+  margin-left: 8px;
+}
+
+/* Clear float */
+.button-container::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Incident Management hover menu styles */
+.dash-nav-hover-group {
+  position: relative;
+  display: inline-block;
+}
+
+.dash-nav-disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.7;
+}
+
+.dash-nav-hover-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.dash-nav-hover-item {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  background: white;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.dash-nav-hover-item:hover {
+  background: #f5f5f5;
+}
+
+.dash-nav-hover-item:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.dash-nav-hover-item:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}

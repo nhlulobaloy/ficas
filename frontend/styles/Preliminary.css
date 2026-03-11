@@ -1,0 +1,311 @@
+/* INCIDENT TABLE – ULTRA COMPACT */
+.incident-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px; /* Reduced */
+  background: #ffffff;
+  font-size: 12px; /* Smaller */
+}
+
+.incident-table th,
+.incident-table td {
+  border: 1px solid #cccccc;
+  padding: 6px 8px; /* Much smaller */
+  text-align: left;
+  color: #111111;
+  font-size: 12px; /* Added */
+}
+
+.incident-table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 11px; /* Added smaller */
+  padding: 6px 8px; /* Consistent */
+}
+
+.incident-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.incident-table tr:hover {
+  background-color: #eeeeee;
+}
+
+/* ACTION BUTTON - Smaller */
+.edit-btn {
+  padding: 4px 8px; /* Reduced */
+  background-color: #111111;
+  color: #ffffff;
+  border: 1px solid #111111;
+  border-radius: 2px; /* Smaller */
+  font-size: 11px; /* Smaller */
+  cursor: pointer;
+  height: 24px; /* Fixed height */
+}
+
+.edit-btn:hover {
+  background-color: #000000;
+}
+
+.logout-button {
+  position: fixed;
+  top: 12px; /* Closer to top */
+  right: 12px;
+  padding: 5px 12px; /* Smaller */
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 2px; /* Smaller */
+  font-weight: 500;
+  font-size: 12px; /* Smaller */
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.logout-button:hover {
+  background-color: #b91c1c;
+}
+
+/* Optional: Make table more compact */
+.incident-table td:first-child,
+.incident-table th:first-child {
+  padding-left: 6px; /* Even tighter */
+}
+
+.incident-table td:last-child,
+.incident-table th:last-child {
+  padding-right: 6px;
+}
+
+.preliminary-dashboard {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.user-notice {
+  background: #e8f4fd;
+  border: 1px solid #b6d4fe;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #084298;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 300px;
+}
+
+.filter-select {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+  min-width: 200px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+.no-incidents {
+  text-align: center;
+  padding: 40px;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  color: #666;
+  font-size: 14px;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-refer-to-preliminary {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-close {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-refer {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status-full_investigation {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Modal Overlay & Content */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 2px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 20px 24px;
+    position: relative;
+}
+
+/* Modal Header */
+.modal-content h3 {
+    margin-top: 0;
+    color: #1a1a1a;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fafafa;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;   /* slightly higher */
+    right: 8px; /* slightly more to the right */
+    padding: 6px 12px;
+    border: none;
+    color: #fff;
+    font-size: 12px; /* slightly bigger */
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s ease;
+    z-index: 10; /* make sure it's above everything */
+}
+
+.close-btn:hover {
+
+}
+
+.close-btn:active {
+    transform: translateY(1px);
+}
+
+/* Optional: Details Grid inside modal */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    padding: 0;
+    margin-top: 16px;
+}
+
+.detail-item {
+    padding: 16px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item:nth-child(odd) {
+    border-right: 1px solid #f0f0f0;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+    border-right: none;
+}
+
+.detail-item strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #666;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.detail-item span {
+    font-size: 11px;
+    color: #1a1a1a;
+    line-height: 1.5;
+}
+
+/* Scroll for long content */
+.details-text {
+    max-height: 180px;
+    overflow-y: auto;
+    padding: 8px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 2px;
+    font-size: 11px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 14px;
+  color: #333;
+}
