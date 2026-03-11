@@ -5,4 +5,4 @@ import { getUsers, updateUser } from '../Controllers/UserManagementController.js
 const router = express.Router();
 router.get('/', authMiddleware, getUsers); 
 router.post('/update', authMiddleware, updateUser); 
-export default router;
+export default router;//
