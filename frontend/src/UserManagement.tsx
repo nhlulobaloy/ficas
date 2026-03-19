@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "../styles/UserManagement.css";
 import axios from "axios";
 
+
+
 interface User {
   id: number;
   name: string;
@@ -149,8 +151,28 @@ export default function UserManagement() {
                 <h3>User Details</h3>
                 <p>ID: {selectedUser.id}</p>
                 <p>Name: {selectedUser.name}</p>
-                <p>Role: {selectedUser.role}</p>
+                
                 <div>
+                  <div>
+                    <label>Role</label>
+                    <select
+                    value={selectedUser.role}
+                    onChange={(e) => setSelectedUser({
+                      ...selectedUser,
+                      role: (e.target.value)
+                    })}
+                    >
+                      <option value={"user"}>user</option>
+                      <option value={"fraud_prevention_investigator"}>Fraud Prevention Investigator</option>
+                      <option value={"forensic_investigator"}>Forensic Investigator</option>
+                      <option value={"preliminary_investigator"}>Preliminary Investigator</option>
+                      <option></option>
+                      <option></option>
+                      <option></option>
+                      <option></option>
+
+                    </select>
+                  </div>
                   <label>Create Incident: </label>
                   <select
                     value={selectedUser.create_incident}
