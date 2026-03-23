@@ -28,7 +28,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/forensic', forensicRoutes);
 app.use('/api/fraud/prevention', fraudPreventionRoutes)
 app.use('/api/fraud/detection', fraudDetectionRoutes)
-app.use('/api/user/management', userManagement);       
+app.use('/api/user/management', userManagement);     
 //app,use('/api/preli/subcategories', subPreli)
 
 app.listen(process.env.PORT ,()=> {console.log(`listining to port ${process.env.PORT}`)});

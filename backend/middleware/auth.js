@@ -8,7 +8,7 @@ export const authMiddleware= (req, res, next) => {
         const decoded = jwt.verify(authHeader, process.env.SECRET_KEY)
         req.user = {
             id: decoded.id,
-            name: decoded.name, 
+            name: decoded.name,  
            // email: decoded.email,
             role: decoded.role,
             email: decoded.email
@@ -18,4 +18,4 @@ export const authMiddleware= (req, res, next) => {
     } catch (error) {
         return res.status(403).json({message: error})
     }
-}
+}    

@@ -18,6 +18,7 @@ import ReviewFraudPrevention from "./Review-Fraud-Prevention";
 import FraudPrevention from "./FraudPrevention";
 import FraudDetection from "./FraudDetection";
 import UserManagement from "./UserManagement";
+import UpdateProfile from "./UpdateProfile";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
           element={
             <Layout>
               <Incident />
+            </Layout>
+          }
+        />
+        <Route
+          path="/update/profile"
+          element={
+            <Layout>
+              <UpdateProfile />
             </Layout>
           }
         />
@@ -51,7 +60,6 @@ function App() {
             </Layout>
           }
         />
-
         <Route
           path="/user/management"
           element={
@@ -162,7 +170,6 @@ function App() {
             </Layout>
           }
         />
-
         <Route
           path="/fraud-prevention"
           element={
