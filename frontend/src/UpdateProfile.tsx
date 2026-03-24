@@ -6,6 +6,7 @@ interface User {
   name: string;
   email: string;
   password: string;
+  role: string;
   newPassword: string;
 }
 
@@ -13,6 +14,10 @@ export default function UpdateProfile() {
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState<User>();
   const [loading, setLoading] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+
 
   const getUser = async () => {
     const res = await axios.get(`http://localhost:3000/api/profile`, {
@@ -23,22 +28,41 @@ export default function UpdateProfile() {
     setUserData(res.data.data);
   };
 
+  const updateUser = async () => {
+
+
+  }
+
   useEffect(() => {
     getUser();
   }, [token, setUserData]);
+
+useEffect(() => {
+  if (userData) {
+    setName(userData.name);
+    setEmail(userData.email);
+  }
+}, [userData]);
   //getUser()
   if (!userData) return <div>Loading...</div>;
   return (
     <>
-      <h1>Hello world</h1>
+      <h1>Update your details</h1>
   
         <div key={userData.id}>
-          ID: {userData.id}
-          <h2>Name: {userData.name}</h2>
-          <h2>Email: {userData.email}</h2>
-          <h2></h2>
+          ID: {userData.id}<br></br>
+          <input
+          value={name}
+
+          onChange={(e) => setName(e.target.value)}
+          ></input><br></br>
+          <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          ></input>
+          <h3>Role: {userData.role}</h3>
+           <button onClick={updateUser}>Save</button>
         </div>
-  
     </>
   );
 }
