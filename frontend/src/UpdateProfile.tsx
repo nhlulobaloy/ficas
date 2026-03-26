@@ -18,7 +18,7 @@ export default function UpdateProfile() {
   const [email, setEmail] = useState("");
 
 
-
+//get the user data
   const getUser = async () => {
     const res = await axios.get(`http://localhost:3000/api/profile`, {
       headers: {
@@ -27,10 +27,15 @@ export default function UpdateProfile() {
     });
     setUserData(res.data.data);
   };
-
+//send the request to the backend
   const updateUser = async () => {
-
-
+    const data = {name, email}
+   const res = await axios.post(`http://localhost:3000/api/profile/update`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+   })
+  await getUser();
   }
 
   useEffect(() => {
@@ -58,7 +63,7 @@ useEffect(() => {
           ></input><br></br>
           <input
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)} readOnly
           ></input>
           <h3>Role: {userData.role}</h3>
            <button onClick={updateUser}>Save</button>
