@@ -14,11 +14,13 @@ import Forensic from "./Forensic";
 import ReviewForensic from "./ReviewForensic";
 import DraftForensic from "./DraftForensic";
 import { Review_Incident } from "./Review-Incident";
-import ReviewFraudPrevention from "./Review-Fraud-Prevention";
+import ReviewFraudPrevention from "./ReviewFraudPrevention";
 import FraudPrevention from "./FraudPrevention";
 import FraudDetection from "./FraudDetection";
 import UserManagement from "./UserManagement";
 import UpdateProfile from "./UpdateProfile";
+import ReviewFraudDetection from "./ReviewFraudDetection";
+
 
 function App() {
   return (
@@ -115,6 +117,15 @@ function App() {
               <DraftFraudDetection />
             </Layout>
           }
+        />
+
+        <Route
+        path="fraud/detection/review"
+        element={
+          <Layout>
+            <ReviewFraudDetection/>
+          </Layout>
+        }
         />
         <Route
           path="/draft/forensic/:id"

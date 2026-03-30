@@ -15,8 +15,6 @@ export const updateUser = async (req, res) => {
   try {
     connection = await pool.getConnection();
 
-    console.log(req.body);
-
     const { selectedUser } = req.body;
 
     if (!selectedUser) {

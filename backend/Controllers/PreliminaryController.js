@@ -653,6 +653,7 @@ export const assignInvestigator = async (req, res) => {
   try {
     const { id } = req.params;
     const { assigned_to, assigned_investigator_name, status } = req.body;
+    console.log()
 
     if (!id) {
       return res.status(400).json({ error: "Missing preliminary id" });
@@ -664,8 +665,8 @@ export const assignInvestigator = async (req, res) => {
 
     // create forensic ONLY if preliminary exists
     const sql2 = `
-      INSERT INTO forensic_investigation_report (preliminary_id)
-      SELECT id FROM preliminary_investigations WHERE id = ?
+      INSERT INTO forensic_investigation_report (preliminary_id, incident_id)
+SELECT id, incident_id FROM preliminary_investigations WHERE id = ?
     `;
     await pool.execute(sql2, [id]);
 

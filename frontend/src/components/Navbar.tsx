@@ -59,7 +59,7 @@ const NavBar: React.FC = () => {
 
   const fraudDetectionOptions = [
     { name: "Draft Fraud Detection", path: "/fraud/detection" },
-    { name: "Review Fraud Detection", path: "/fraud-detection/review" },
+    { name: "Review Fraud Detection", path: "/fraud/detection/review" },
   ];
 
   const adminOptions = [

@@ -68,15 +68,13 @@ export default function UserManagement() {
   };
 
   const updateUser = async () => {
-  
    const res = await axios.post(`http://localhost:3000/api/user/management/update`,{
   selectedUser},
     {headers: {
       Authorization: `Bearer ${token}`
     }
    })
-  }
-
+  } 
   const getUsers = async () => {
     const res = await axios.get(`http://localhost:3000/api/user/management`, {
       headers: {

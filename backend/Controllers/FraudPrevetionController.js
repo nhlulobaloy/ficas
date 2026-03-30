@@ -375,20 +375,30 @@ export const assignInvestigator = async (req, res) => {
     const { id } = req.params
     const { assigned_to, conducted_by, status } = req.body;
     const [updateFraudPreventionStatus] = await pool.execute('UPDATE fraud_prevention SET status = ? WHERE  id = ?', ['approved', id]);
+
+    //first check for duplicates
+    const [duplicates] = await pool.execute("SELECT * FROM  fraud_detection WHERE fraud_prevention_id = ?", [id]);
+    console.log(duplicates.length)
+    if(duplicates.length > 0) {
+      const [updateCase] = await pool.query("UPDATE fraud_detection SET assigned_to = ? WHERE fraud_prevention_id = ?", [assigned_to, id]);
+     return res.status(200).json({ success: 'success' });
+    }
+
+    //if no duplicates now you can insert into the db as a new row
     const [createCase] = await pool.execute('INSERT INTO fraud_detection (fraud_prevention_id, status, assigned_to) VALUES (?,?,?)', [id, 'draft', assigned_to]);
     res.status(200).json({ success: 'success' });
   } catch (error) {
     console.error("Error fetching fraud case:", error);
     res.status(500).json({ error: "Server error" });
   }
-}
+}  
 
 export const verifyReview = async (req, res) => {
   try {
     const user = req.user;
     const [verify] = await pool.execute('SELECT fraud_prevention_review FROM access_rights WHERE user_id = ?', [user.id])
-    if (verify[0].fraud_prevention_review == 0) return res.sendStatus(403);
-    if (verify.length <= 0) return res.sendStatus(401)
+if (verify.length <= 0) return res.sendStatus(401);
+if (verify[0].fraud_prevention_review == 0) return res.sendStatus(403);
     return res.sendStatus(200)
   } catch (error) {
     console.error("Error fetching fraud case:", error);

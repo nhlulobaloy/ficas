@@ -14,6 +14,7 @@ interface ForensicComment {
 
 interface ForensicInvestigation {
   id: number;
+  incident_id: number;
   preliminary_id: number;
   background: string;
   abbreviations: string;
@@ -468,7 +469,6 @@ export default function ReviewForensic() {
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>Preliminary ID</th>
               <th>Recommendations</th>
               <th>Status</th>
@@ -478,7 +478,6 @@ export default function ReviewForensic() {
           <tbody>
             {filteredInvestigations.map((i) => (
               <tr key={i.id}>
-                <td>{i.id}</td>
                 <td>{i.preliminary_id}</td>
                 <td>{i.recommendations || "N/A"}</td>
                 <td>

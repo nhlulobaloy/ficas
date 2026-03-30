@@ -11,4 +11,4 @@ router.post('/auth', authMiddleware, verifyAccessCreate);//verify the access of 
 router.get('/auth/access', authMiddleware, verifyAccessAssign);//controlles access to the incident review
 router.get('/api/investigators', authMiddleware, getIncidentInvestigators);//get the preliminary investigators
   
-export default router; 
+export default router;  

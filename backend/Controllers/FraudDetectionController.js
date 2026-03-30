@@ -38,13 +38,13 @@ export const getDetectionCase = async (req, res) => {
       [id]
     );
     //if case not found return not found error 
-    if (getDetectionId.length <= 0) return res.sendStatus(404)
+    if (getDetectionId.length <= 0) return res.sendStatus(404) 
 
     const DetectionId = getDetectionId[0].id;
 
     // 2. Fetch the main fraud detection record
     const [detectionRows] = await pool.execute(
-      `SELECT
+      `SELECT 
           fraud_prevention_id,
           background,
           findings,
