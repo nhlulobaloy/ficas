@@ -1,5 +1,10 @@
+import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
+import redis from 'redis';
+
+
 import incidentRoutes from './Routes/incidentRoutes.js';
 import categoryRoutes from './Routes/categoryRoutes.js';
 import authRoutes from './Routes/authRoutes.js';
@@ -11,7 +16,11 @@ import fraudPreventionRoutes from './Routes/fraudPrevetionRoutes.js';
 import fraudDetectionRoutes from './Routes/fraudDetectionRoutes.js';
 import userManagement from './Routes/userManagementRoutes.js';
 
-import 'dotenv/config';
+
+const redisClient = redis.createClient();
+redisClient.on('error', (err) => console.log('Redis error:', err));
+await redisClient.connect();
+console.log('Redis connected:', redisClient.isReady);
 
 const app = express();
 app.use(express.json());
@@ -32,3 +41,5 @@ app.use('/api/user/management', userManagement);
 //app,use('/api/preli/subcategories', subPreli)
 
 app.listen(process.env.PORT ,()=> {console.log(`listining to port ${process.env.PORT}`)});
+
+export { redisClient }

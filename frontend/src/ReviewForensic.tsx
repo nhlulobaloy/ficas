@@ -54,20 +54,15 @@ export default function ReviewForensic() {
   const [investigations, setInvestigations] = useState<ForensicInvestigation[]>(
     [],
   );
-  const [filteredInvestigations, setFilteredInvestigations] = useState<
-    ForensicInvestigation[]
-  >([]);
+  const [filteredInvestigations, setFilteredInvestigations] = useState<ForensicInvestigation[]>([]);
   const [loading, setLoading] = useState(true);
   const [sessionMessage, setSessionMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedInvestigation, setSelectedInvestigation] =
-    useState<ForensicInvestigation | null>(null);
+  const [selectedInvestigation, setSelectedInvestigation] = useState<ForensicInvestigation | null>(null);
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [returnComments, setReturnComments] = useState("");
-  const [managementAction, setManagementAction] = useState<
-    "assign_investigator" | "close_case" | "refer_department" | "return" | ""
-  >("");
+  const [managementAction, setManagementAction] = useState<"assign_investigator" | "close_case" | "refer_department" | "return" | "" >("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("");
   const [investigators, setInvestigators] = useState<Investigator[]>([]);
@@ -478,6 +473,7 @@ export default function ReviewForensic() {
           <tbody>
             {filteredInvestigations.map((i) => (
               <tr key={i.id}>
+
                 <td>{i.preliminary_id}</td>
                 <td>{i.recommendations || "N/A"}</td>
                 <td>
@@ -496,16 +492,16 @@ export default function ReviewForensic() {
 
           <div className="pagination">
             <button onClick={() => setCurrentPage(prev => prev - 1)}
-              disabled = {currentPage === 1}
-              >
+              disabled={currentPage === 1}
+            >
               Previous
             </button>
 
             <span>Page {currentPage} of {totalPages}</span>
 
             <button onClick={() => setCurrentPage(prev => prev + 1)}
-              disabled = { currentPage === totalPages}
-              >
+              disabled={currentPage === totalPages}
+            >
 
               Next
             </button>

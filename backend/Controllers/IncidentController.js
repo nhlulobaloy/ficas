@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import { redisClient } from "../index.js";
 
 export const createIncident = async (req, res, next) => {
   try {
@@ -129,6 +130,18 @@ export const getIncident = async (req, res, next) => {
 
 //get the incidents assinged to a preliminary
 export const getIncidents = async (req, res, next) => {
+
+  const cacheKey = `incidents_page_${page}`;
+  const cached = await redisClient.get(cacheKey);
+
+  if(cached) {
+    const data = JSON.parse(cached);
+    return res.json({
+      message: "success",
+      data: data,
+      pagination: { currentPage: page, totalPages, totalItems, itemsPerPage: limit}
+    })
+  }
   try {
     const page = parseInt(req.query.page) || 1; //get the query from the req
     const limit = parseInt(req.query.limit) || 10;
