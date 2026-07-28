@@ -1,18 +1,17 @@
 import {userInfo} from 'node:os';
 import pool from '../config/db.js';
-import {redisClient} from '../index.js';
+
 
 export const getUsers = async (req, res) => {
   const cacheKey = 'all_users';//declare the cache key
 
-  const cached = await redisClient.get(cacheKey);// get the cached data using the key
+
   if (cached) return res.status (200).json (JSON.parse (cached));//if there is data then return it 
   const [results] = await pool.query (
     'SELECT u.*, a.* FROM users u LEFT JOIN access_rights a ON u.id = a.user_id'
   );
   results.forEach(user => delete user.password);//delete the user password from the db such that if's not sent to the frontend
 
-  await redisClient.setEx(cacheKey, 60, JSON.stringify({results}));
 
   res.status (200).json ({results}); 
 };
