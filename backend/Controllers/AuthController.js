@@ -2,9 +2,6 @@ import pool from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validator from "validator";
-import env from "dotenv";
-
-env.config();
 
 export const SignUp = async (req, res) => {
   try {

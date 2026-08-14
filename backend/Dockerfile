@@ -11,4 +11,4 @@ COPY . .
 #expose port 3000
 EXPOSE 3000
 #run the command to start the application
-CMD ["npm", "run", "dev"]
+CMD ["node", "index.js"]

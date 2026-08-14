@@ -1,9 +1,9 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config(); // call and declare the dotenv file
 
+// import express and declare the cors
 import express from 'express';
 import cors from 'cors';
-
-
 
 import incidentRoutes from './Routes/incidentRoutes.js';
 import categoryRoutes from './Routes/categoryRoutes.js';
@@ -19,7 +19,6 @@ import userManagement from './Routes/userManagementRoutes.js';
 const app = express();
 app.use(express.json());
 app.use(cors())
-
 
 //Declare routes 
 app.use("/api/incidents", incidentRoutes);
