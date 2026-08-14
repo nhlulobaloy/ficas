@@ -16,11 +16,12 @@ import fraudPreventionRoutes from './Routes/fraudPrevetionRoutes.js';
 import fraudDetectionRoutes from './Routes/fraudDetectionRoutes.js';
 import userManagement from './Routes/userManagementRoutes.js';
 
+
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors({ origin : 'http://localhost:5173'})) // only allow this domAIn to send requests to this server
 
-//Declare routes 
+// declare routes 
 app.use("/api/incidents", incidentRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use('/api/auth', authRoutes);
@@ -31,6 +32,6 @@ app.use('/api/forensic', forensicRoutes);
 app.use('/api/fraud/prevention', fraudPreventionRoutes)
 app.use('/api/fraud/detection', fraudDetectionRoutes)
 app.use('/api/user/management', userManagement);     
-//app,use('/api/preli/subcategories', subPreli)
+// app,use('/api/preli/subcategories', subPreli)
 
 app.listen(process.env.PORT ,()=> {console.log(`listining to port ${process.env.PORT}`)});
