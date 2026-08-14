@@ -1,32 +1,36 @@
-"# Incident Management System
+# FICAS – Forensic Investigation Case Administration System
 
-A comprehensive incident management and forensic investigation system for tracking ethics violations, preliminary investigations, and case workflows.
+A monolithic case management system designed to **reduce paperwork for lawyers and forensic administrators** by digitising case processing and investigation workflows.
 
 ## Features
-- User authentication (JWT)
-- Incident reporting with categorization
-- Preliminary investigation workflows
-- Role-based approvals
-- MySQL database backend
-- React frontend
-- Express REST API
+
+* Digital case management and processing
+* Forensic administration and preliminary investigation workflows
+* RBAC — users only access authorised cases and pages
+* JWT authentication
+* React frontend and Express REST API
+* MySQL database
 
 ## Tech Stack
-- **Backend:** Node.js, Express, MySQL
-- **Frontend:** React, CSS
-- **Authentication:** JWT, bcrypt
-- **Database:** MySQL
 
-## Installation
-1. Clone repo
-2. Backend: \`npm install\`, configure .env, run \`npm run dev\`
-3. Frontend: \`npm install\`, run \`npm run dev\`
+* **Frontend:** React
+* **Backend:** Node.js, Express
+* **Database:** MySQL
+* **Authentication:** JWT, bcrypt
+* **Architecture:** Monolithic
+* **Containerisation:** Docker & Docker Compose
+* **Environment:** Development
 
-## Database
-See \`database_schema.sql\` for table structures.
+## Run with Docker
 
-## API Documentation
-Endpoints documented in \`/docs/api.md\`
+```bash, cmd
+git clone <repository-url>
+cd ficas
+docker compose up --build -d
+```
 
-## License
-MIT"
+The frontend and backend services are orchestrated using Docker Compose.
+
+## Purpose
+
+FICAS digitises case workflows, reducing manual paperwork while ensuring users only access the cases and functionality assigned to their roles.
