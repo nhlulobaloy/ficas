@@ -12,7 +12,7 @@ import {
   updateCase, 
   //getInvestigators, 
   //getDetectionCases 
-} from '../Controllers/FraudDetectionController.js';
+} from '../controllers/FraudDetectionController.js';
 
 import { authMiddleware } from '../middleware/auth.js';
 

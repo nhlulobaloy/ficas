@@ -1,5 +1,5 @@
 import express from 'express';
-import { createIncident, getIncidents, getIncidentInvestigators, getIncident, updateIncident, verifyAccessCreate, verifyAccessAssign } from '../Controllers/IncidentController.js';
+import { createIncident, getIncidents, getIncidentInvestigators, getIncident, updateIncident, verifyAccessCreate, verifyAccessAssign } from '../controllers/IncidentController.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();

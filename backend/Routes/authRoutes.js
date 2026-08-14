@@ -4,7 +4,7 @@ import {
     Login,
     VerifyToken,
     getUser
-} from '../Controllers/AuthController.js';
+} from '../controllers/AuthController.js';
 
 import { authMiddleware } from '../middleware/auth.js';
 

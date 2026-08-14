@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCategoryPreli, getSubCategoryPreli, getDepartmentsPreli} from '../Controllers/CategoryPreliController.js';
+import { getCategoryPreli, getSubCategoryPreli, getDepartmentsPreli} from '../controllers/CategoryPreliController.js';
 
 const router = express.Router();
 router.get('/categories', getCategoryPreli);

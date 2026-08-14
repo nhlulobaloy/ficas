@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyReview, verifyDraft, getForensic, returnCase, assignInvestigator, referCase, closeCase, getFraudCase, getFraudReview, updateCase, getInvestigators, getFraudCases } from '../Controllers/FraudPrevetionController.js';
+import { verifyReview, verifyDraft, getForensic, returnCase, assignInvestigator, referCase, closeCase, getFraudCase, getFraudReview, updateCase, getInvestigators, getFraudCases } from '../controllers/FraudPrevetionController.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 

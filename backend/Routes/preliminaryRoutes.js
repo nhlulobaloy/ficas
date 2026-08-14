@@ -15,7 +15,7 @@ import {
   closeCase,
   getIncidentsAssigned,
   assignInvestigator
-} from '../Controllers/PreliminaryController.js'; 
+} from '../controllers/PreliminaryController.js'; 
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();

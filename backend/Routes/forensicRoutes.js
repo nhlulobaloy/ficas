@@ -1,5 +1,5 @@
 import express from 'express';
-import { referToDepartment, assignInvestigator, getInvestigators, getPreliminary,  getForensics/*closeForensicCase*/, closeCase, returnPreliminary, getForensic, updateForensic, verifyAccessReviewForensic, getForensicReview} from '../Controllers/ForensicController.js';
+import { referToDepartment, assignInvestigator, getInvestigators, getPreliminary,  getForensics/*closeForensicCase*/, closeCase, returnPreliminary, getForensic, updateForensic, verifyAccessReviewForensic, getForensicReview} from '../controllers/ForensicController.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
