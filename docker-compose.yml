@@ -4,10 +4,10 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: forensic_admin
-      MYSQL_USER: ficas_user
-      MYSQL_PASSWORD: ficas_password
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_EXTRA_USER}
+      MYSQL_PASSWORD: ${DB_EXTRA_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
