@@ -24,7 +24,7 @@ A monolithic case management system designed to **reduce paperwork for lawyers a
 ## Run with Docker
 
 ```bash, cmd
-git clone <repository-url>
+git clone https://github.com/nhlulobaloy/ficas.git
 cd ficas
 docker compose up --build -d
 ```
