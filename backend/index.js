@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(cors({ origin: 'http://localhost:5173' })) // only allow this domAIn to send requests to this server
 
 // test the db connection
-/** 
+
 try {
     (async () => {
         await pool.getConnection();
@@ -31,7 +31,7 @@ try {
 } catch (error) {
     console.log('error connectiong database', error)
 }
-*/
+
 // declare routes 
 app.use("/api/incidents", incidentRoutes);
 app.use("/api/categories", categoryRoutes);

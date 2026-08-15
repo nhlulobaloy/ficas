@@ -5,13 +5,14 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: ficas_db
+      MYSQL_DATABASE: forensic_admin
       MYSQL_USER: ficas_user
       MYSQL_PASSWORD: ficas_password
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./forensic_admin.sql:/docker-entrypoint-initdb.d/forensic_admin.sql:ro
   backend:
     container_name: ficas-backend
     build: ./backend
