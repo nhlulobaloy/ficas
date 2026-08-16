@@ -6,9 +6,12 @@ WORKDIR /app
 COPY package*.json ./
 #install dependencies
 RUN npm install
+# install the typescipt run time and dev dep
+RUN npm install typescript tsx
+RUN npm install -D @types/express @types/node @types/cors
 #copy all files to the working directory
 COPY . .
 #expose port 3000
 EXPOSE 3000
 #run the command to start the application
-CMD ["node", "index.js"]
+CMD ["npx", "tsx", "index.ts"]
