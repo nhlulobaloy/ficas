@@ -1,3 +1,4 @@
+import { RowDataPacket } from 'mysql2';
 import pool from '../config/db.js';
 import { Response, Request, NextFunction } from 'express';
 
@@ -26,7 +27,7 @@ export const createIncident = async (req: Request, res: Response, next: NextFunc
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    const [result] = await pool.query (sql, [
+    const [result] = await pool.query <any>(sql, [
       name,
       email,
       contact,
@@ -71,7 +72,7 @@ export const createIncident = async (req: Request, res: Response, next: NextFunc
 };
 
 // In incidentController.js
-export const getIncident = async (req, res, next) => {
+export const getIncident = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {incident_id} = req.params;
 
@@ -90,7 +91,7 @@ export const getIncident = async (req, res, next) => {
       WHERE i.id = ?
     `;
 
-    const [incidentRows] = await pool.query (sqlIncident, [incident_id]);
+    const [incidentRows] = await pool.query<RowDataPacket[]> (sqlIncident, [incident_id]);
     if (incidentRows.length === 0)
       return res.status (404).json ({error: 'Incident not found'});
 
@@ -99,7 +100,7 @@ export const getIncident = async (req, res, next) => {
     // Fetch the preliminary investigation for this incident
     const [
       preliRows,
-    ] = await pool.query (
+    ] = await pool.query <RowDataPacket[]>(
       `SELECT id, status FROM preliminary_investigations WHERE incident_id = ?`,
       [incident_id]
     );
@@ -135,29 +136,14 @@ export const getIncident = async (req, res, next) => {
 };
 
 //get the incidents assinged to a preliminary
-export const getIncidents = async (req, res, next) => {
-  const page = parseInt (req.query.page) || 1; //get the query from the req
-  const limit = parseInt (req.query.limit) || 10;
+export const getIncidents = async (req: Request, res: Response, next: NextFunction) => {
+  const page = parseInt (String(req.query.page)) || 1; //get the query from the req
+  const limit = parseInt (String(req.query.limit)) || 10;
   const offset = (page - 1) * limit;
-
-
-  if (cached) {
-    const data = JSON.parse (cached);
-    return res.json ({
-      message: 'success',
-      data: data.data,
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(data.length / limit),
-        totalItems: data.length,
-        itemsPerPage: limit,
-      },
-    });
-  }
 
   try {
     const countSql = `SELECT COUNT(*) as total from incidents`;
-    const [countResult] = await pool.query (countSql);
+    const [countResult] = await pool.query<RowDataPacket[]> (countSql);
     const total = countResult[0].total;
 
     const sql = `
@@ -195,7 +181,7 @@ export const getIncidents = async (req, res, next) => {
   }
 };
 
-export const getIncidentsAssigned = async (req, res, next) => {
+export const getIncidentsAssigned = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     const tokenId = user.id;
@@ -215,7 +201,7 @@ export const getIncidentsAssigned = async (req, res, next) => {
   }
 };
 
-export const updateIncident = async (req, res, next) => {
+export const updateIncident = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {incident_id} = req.params;
     const {recommendations, assigned_to, referred_department} = req.body;
@@ -263,7 +249,7 @@ export const updateIncident = async (req, res, next) => {
     updateValues.push (incident_id);
 
     const sql = `UPDATE incidents SET ${updateFields.join (', ')} WHERE id = ?`;
-    const [result] = await pool.query (sql, updateValues);
+    const [result] = await pool.query <any>(sql, updateValues);
 
     if (result.affectedRows === 0) {
       return res.status (404).json ({error: 'Incident not found'});
@@ -276,7 +262,7 @@ export const updateIncident = async (req, res, next) => {
   }
 };
 
-export const verifyAccessCreate = async (req, res, next) => {
+export const verifyAccessCreate = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     const userIdFromToken = user.id;
@@ -288,7 +274,7 @@ export const verifyAccessCreate = async (req, res, next) => {
       INNER JOIN users u ON a.user_id = u.id
       WHERE u.id = ?;
     `;
-    const [result] = await pool.query (sql, [userIdFromToken]);
+    const [result] = await pool.query<RowDataPacket[]> (sql, [userIdFromToken]);
     if (!result || result.length === 0)
       return res.status (404).json ({message: 'User not found'});
 
@@ -303,7 +289,7 @@ export const verifyAccessCreate = async (req, res, next) => {
   }
 };
 
-export const verifyAccessAssign = async (req, res, next) => {
+export const verifyAccessAssign = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     const userIdFromToken = user.id;
@@ -315,7 +301,7 @@ export const verifyAccessAssign = async (req, res, next) => {
       INNER JOIN users u ON a.user_id = u.id
       WHERE u.id = ?;
     `;
-    const [result] = await pool.query (sql, [userIdFromToken]);
+    const [result] = await pool.query <RowDataPacket[]>(sql, [userIdFromToken]);
 
     if (!result || result.length === 0)
       return res.status (404).json ({message: 'User not found'});
@@ -333,7 +319,7 @@ export const verifyAccessAssign = async (req, res, next) => {
   }
 };
 
-export const getIncidentInvestigators = async (req, res, next) => {
+export const getIncidentInvestigators = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const sql = `
       SELECT id, name, email 
@@ -350,7 +336,7 @@ export const getIncidentInvestigators = async (req, res, next) => {
   }
 };
 
-export const assignInvestigator = async (req, res, next) => {
+export const assignInvestigator = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {id} = req.params;
     const {assigned_to, assigned_investigator_name, status} = req.body;
