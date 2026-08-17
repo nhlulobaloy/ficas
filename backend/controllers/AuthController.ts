@@ -2,8 +2,10 @@ import pool from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validator from "validator";
+import { NextFunction, Request, Response } from "express";
+import { RowDataPacket } from "mysql2";
 
-export const SignUp = async (req, res) => {
+export const SignUp = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
@@ -42,7 +44,7 @@ export const SignUp = async (req, res) => {
     const [existingUser] = await pool.query(
       "SELECT id FROM users WHERE email = ? LIMIT 1",
       [email]
-    );
+    ) as any;
 
     if (existingUser.length > 0) {
       return res.status(409).json({
@@ -76,11 +78,11 @@ export const SignUp = async (req, res) => {
     });
   }
 };
-export const Login = async (req, res, next) => {
+export const Login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
     const sql = `SELECT * FROM users WHERE email = ?`;
-    const [result] = await pool.query(sql, [email]);
+    const [result] = await pool.query<RowDataPacket[]>(sql, [email]);
     if (result.length === 0)
       return res.status(401).json({ message: "Invalid credentials" });
 
@@ -109,7 +111,7 @@ export const Login = async (req, res, next) => {
   }
 };
 
-export const VerifyToken = async (req, res, next) => {
+export const VerifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) res.json({ valid: "false" });
@@ -121,7 +123,7 @@ export const VerifyToken = async (req, res, next) => {
   }
 };
 
-export const getUser = async (req, res) => {
+export const getUser = async (req: Request, res: Response) => {
    const user = req.user;
    res.status(200).json({user: user})
 }

@@ -1,6 +1,7 @@
 import pool from '../config/db.js';
+import { Request, Response } from 'express';
 
-export const getCategoryPreli = async (req, res) => {
+export const getCategoryPreli = async (req: Request, res: Response) => {
   try {
     const sql = `SELECT * FROM preli_categories`;
     const rows = await pool.query (sql);
@@ -11,7 +12,7 @@ export const getCategoryPreli = async (req, res) => {
   }
 };
 
-export const getSubCategoryPreli = async (req, res) => {
+export const getSubCategoryPreli = async (req: Request, res: Response) => {
   try {
     const {category} = req.query;
 
@@ -24,7 +25,7 @@ export const getSubCategoryPreli = async (req, res) => {
   }
 };
 
-export const getDepartmentsPreli = async (req, res) => {
+export const getDepartmentsPreli = async (req: Request, res: Response) => {
   try {
     const sql = 'SELECT * FROM preli_departments';
     const rows = await pool.query (sql);

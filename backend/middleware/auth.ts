@@ -1,6 +1,21 @@
 import jwt from 'jsonwebtoken';
+import { Request, Response, NextFunction } from 'express';
 
-export const authMiddleware= (req, res, next) => {
+
+// declare the global interface along with the types
+declare global {
+    namespace  Express {
+        interface Request {
+            user : {
+                id: number,
+                name: String,
+                role: String,
+                email: String
+            }
+        }
+    }
+}
+export const authMiddleware= (req: Request, res: Response, next: NextFunction) => {
     //get the token from the authorization
     const authHeader = req.header("Authorization")?.replace("Bearer ", "");
     if(!authHeader) return res.status(401).json({message: 'No token found! check'});

@@ -1,7 +1,8 @@
 import pool from '../config/db.js';
+import { Response, Request, NextFunction } from 'express';
 
 
-export const createIncident = async (req, res, next) => {
+export const createIncident = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
       name,
