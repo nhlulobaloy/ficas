@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import dotenv from 'dotenv'
+
 
 
 // declare the global interface along with the types
@@ -20,7 +22,7 @@ export const authMiddleware= (req: Request, res: Response, next: NextFunction) =
     const authHeader = req.header("Authorization")?.replace("Bearer ", "");
     if(!authHeader) return res.status(401).json({message: 'No token found! check'});
     try {
-        const decoded = jwt.verify(authHeader, process.env.SECRET_KEY)
+        const decoded = jwt.verify(authHeader, process.env.SECRET_KEY!) as any 
         req.user = {
             id: decoded.id,
             name: decoded.name,  

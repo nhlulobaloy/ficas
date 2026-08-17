@@ -93,7 +93,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
 
     const token = jwt.sign(
       { id: user.id, name: user.name, email: user.email, role: user.role },
-      process.env.SECRET_KEY,
+      process.env.SECRET_KEY!,
       { expiresIn: "100000h" },
     );
 
@@ -115,7 +115,7 @@ export const VerifyToken = async (req: Request, res: Response, next: NextFunctio
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) res.json({ valid: "false" });
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token!, process.env.SECRET_KEY!);
     return res.json({ valid: true, user: decoded });
   } catch (error) {
     console.error(`An error occured: ${error}`);
