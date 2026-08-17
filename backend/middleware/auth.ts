@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 
 // declare the global interface along with the types
 declare global {
-    namespace  Express {
+    namespace Express {
         interface Request {
             user : {
                 id: number,
