@@ -1,8 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import dotenv from 'dotenv'
-
-
 
 // declare the global interface along with the types
 declare global {
@@ -17,8 +14,9 @@ declare global {
         }
     }
 }
+// this middleware verifies the token on every request send to the backend
 export const authMiddleware= (req: Request, res: Response, next: NextFunction) => {
-    //get the token from the authorization
+    // get the token from the authorization
     const authHeader = req.header("Authorization")?.replace("Bearer ", "");
     if(!authHeader) return res.status(401).json({message: 'No token found! check'});
     try {
@@ -33,6 +31,9 @@ export const authMiddleware= (req: Request, res: Response, next: NextFunction) =
         //move from the middleware and continue to what comes after it
         next();
     } catch (error) {
-        return res.status(403).json({message: error})
+    if (error instanceof Error && error.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expired" });
     }
+    return res.status(403).json({ message: "Invalid token" });
+}
 }    

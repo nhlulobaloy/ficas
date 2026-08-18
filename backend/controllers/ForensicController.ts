@@ -4,11 +4,11 @@ import { Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
 
 export interface tokenData {
-      id: number,
-      name: string,
-      email: string,
-      role: string
-    }
+  id: number,
+  name: string,
+  email: string,
+  role: string
+}
 
 export const referToDepartment = async (req: Request, res: Response) => {
   try {
@@ -275,8 +275,8 @@ export const verifyAccessReviewForensic = async (req: Request, res: Response) =>
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) return res.status(401).json({ message: "Token missing" });
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as tokenData ;
-    const tokenId = decoded.id ;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as tokenData;
+    const tokenId = decoded.id;
     const sql = `SELECT review_forensic FROM access_rights WHERE user_id = ?`;
     const [result] = await pool.query<RowDataPacket[]>(sql, [tokenId]);
     if (result.length === 0) {
@@ -300,7 +300,7 @@ export const getPreliminary = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const tokenId = user.id;
-    const page = parseInt (String(req.query.page)) || 1;
+    const page = parseInt(String(req.query.page)) || 1;
     const limit = parseInt(String(req.query.limit)) || 10;
     const offset = (page - 1) * limit
 
