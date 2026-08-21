@@ -1,0 +1,179 @@
+{
+  "navbar": {
+    "logo": "FICAS",
+    "links": ["Features", "Who Can Use", "Customize", "About"]
+  },
+  "hero": {
+    "title": "Streamline Forensic Investigations",
+    "highlight": "With Digital Case Administration",
+    "description": "FICAS reduces manual paperwork and centralises case information for forensic investigators, lawyers and administrators. Manage cases efficiently from a single, secure system.",
+    "buttons": {
+      "primary": "Access FICAS",
+      "secondary": "Learn More"
+    }
+  },
+  "heroCards": [
+    {
+      "title": "Digital Case Management",
+      "text": "Move from paper-based to a streamlined digital workflow."
+    },
+    {
+      "title": "Role-Based Access",
+      "text": "Ensure users only see cases assigned to their role.",
+      "accent": true
+    }
+  ],
+  "features": {
+    "title": "Features",
+    "subtitle": "Click on each section to learn more about what FICAS offers.",
+    "items": [
+      {
+        "id": "case-management",
+        "title": "Case Management",
+        "description": "Streamline the entire case lifecycle from creation to resolution.",
+        "details": [
+          "Create and assign cases to investigators",
+          "Track case progress and status updates",
+          "Store all case documents and evidence in one place",
+          "Set deadlines and automated reminders"
+        ]
+      },
+      {
+        "id": "investigation",
+        "title": "Investigation Tools",
+        "description": "Comprehensive tools for forensic investigators to document and manage their work.",
+        "details": [
+          "Document findings and evidence digitally",
+          "Organise investigation workflows and checklists",
+          "Share findings securely with legal teams",
+          "Maintain complete audit trails"
+        ]
+      },
+      {
+        "id": "administration",
+        "title": "Administration and Reporting",
+        "description": "Tools for managers and administrators to oversee operations.",
+        "details": [
+          "Oversee all active cases from one dashboard",
+          "Assign tasks and monitor team performance",
+          "Generate custom reports and summaries",
+          "Manage user roles and permissions"
+        ]
+      },
+      {
+        "id": "security",
+        "title": "Security and Compliance",
+        "description": "Enterprise-grade security to protect sensitive case data.",
+        "details": [
+          "Role-based access control for sensitive information",
+          "Encrypted data storage and transmission",
+          "Audit trails for all actions",
+          "Compliance with data protection regulations"
+        ]
+      },
+      {
+        "id": "customization-feature",
+        "title": "Customization",
+        "description": "Adapt the system to your organisation's specific needs.",
+        "details": [
+          "Custom colour schemes to match your branding",
+          "Modular features to enable only what you need",
+          "Configurable workflows and approval processes",
+          "Personalised dashboards for different roles"
+        ]
+      }
+    ]
+  },
+  "whoCanUse": {
+    "title": "Who Can Use FICAS",
+    "subtitle": "FICAS is designed for professionals who need efficient, secure case management.",
+    "cards": [
+      {
+        "title": "Lawyers and Legal Teams",
+        "items": [
+          "Manage case files and evidence digitally",
+          "Track case progress and deadlines",
+          "Collaborate with forensic experts",
+          "Generate reports and summaries"
+        ]
+      },
+      {
+        "title": "Forensic Investigators",
+        "items": [
+          "Document findings and evidence",
+          "Organise investigation workflows",
+          "Share findings with legal teams",
+          "Maintain audit trails"
+        ]
+      },
+      {
+        "title": "Administrators and Managers",
+        "items": [
+          "Oversee all active cases",
+          "Assign tasks and responsibilities",
+          "Monitor team performance",
+          "Generate organisational reports"
+        ]
+      }
+    ]
+  },
+  "customization": {
+    "title": "Customizable to Your Needs",
+    "subtitle": "FICAS adapts to your organisation's requirements, not the other way around.",
+    "cards": [
+      {
+        "title": "Custom Colors and Branding",
+        "text": "Match your organisation's brand with customisable colour schemes. Make FICAS feel like your own system."
+      },
+      {
+        "title": "Modular Features",
+        "text": "Add or remove features based on your workflow. Enable only what your team needs, keeping the system lean and focused."
+      }
+    ]
+  },
+  "about": {
+    "title": "About FICAS",
+    "paragraphs": [
+      "The <strong>Forensic Investigation Case Administration System (FICAS)</strong> was built to solve a core problem: the overwhelming amount of manual paperwork and fragmented information in forensic case management.",
+      "FICAS empowers forensic investigators, legal professionals and administrative staff to manage cases digitally, reducing the risk of lost information and improving collaboration across teams.",
+      "By centralising case data, automating routing and providing clear role-based access, FICAS helps teams deliver faster, more accurate results while maintaining a complete, auditable history of every case."
+    ]
+  },
+  "steps": {
+    "title": "How FICAS Works",
+    "subtitle": "A simple, three-step digital workflow for your team.",
+    "items": [
+      {
+        "number": 1,
+        "title": "Create and Manage Cases",
+        "text": "Log incidents, assign investigators and define case details from the start."
+      },
+      {
+        "number": 2,
+        "title": "Organise Investigation Data",
+        "text": "Collect findings, statements and evidence in a structured digital format."
+      },
+      {
+        "number": 3,
+        "title": "Monitor from One System",
+        "text": "Track progress, review findings and approve conclusions all in one place."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to Manage Forensic Cases Digitally?",
+    "text": "Join the transition away from manual paperwork and experience a modern, streamlined case administration system.",
+    "button": "Login and Access FICAS"
+  },
+  "contact": {
+    "title": "Request a Free Demo",
+    "email": "n.baloye@outlook.com",
+    "subtext": "Click the email to request a free demo. We will call you back within 24 hours."
+  },
+  "footer": {
+    "brand": "FICAS",
+    "sub": "Forensic Investigation Case Administration System",
+    "links": ["Features", "Who Can Use", "Customize", "About", "Login"],
+    "copyright": "FICAS. All rights reserved."
+  }
+}
