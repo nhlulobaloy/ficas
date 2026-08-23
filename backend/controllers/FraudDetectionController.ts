@@ -1,18 +1,21 @@
 import pool from '../config/db.js';
 import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import { RowDataPacket } from 'mysql2';
+import { tokenData } from './ForensicController.js';
 
-export const getPrevention = async (req, res) => {
+export const getPrevention = async (req: Request, res: Response) => {
 
   try {
     //get fraud prevention cases assinged to this investigator
     const user = req.user;
     const tokenId = user.id;
 
-    const limit = parseInt(req.query.limit);
-    const page = parseInt(req.query.page);
+    const limit = parseInt(String(req.query.limit));
+    const page = parseInt(String(req.query.page));
     const offset = (page - 1) * limit;
 
-    const [result] = await pool.query(`SELECT COUNT(*) AS total FROM fraud_prevention WHERE assigned_to = ? `, [tokenId]);
+    const [result] = await pool.query<RowDataPacket[]>(`SELECT COUNT(*) AS total FROM fraud_prevention WHERE assigned_to = ? `, [tokenId]);
     const total = result[0].total
 
     const sql = 'SELECT * FROM fraud_prevention WHERE assigned_to = ? LIMIT ? OFFSET ?';
@@ -29,11 +32,11 @@ export const getPrevention = async (req, res) => {
 }
 
 //get the detection case for the updating team
-export const getDetectionCase = async (req, res) => {
+export const getDetectionCase = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const [getDetectionId] = await pool.execute(
+    const [getDetectionId] = await pool.execute<RowDataPacket[]>(
       'SELECT id FROM fraud_detection WHERE fraud_prevention_id = ?',
       [id]
     );
@@ -69,7 +72,7 @@ export const getDetectionCase = async (req, res) => {
        FROM fraud_detection
        WHERE id = ?`,
       [DetectionId]
-    );
+    ) as RowDataPacket[];
 
     if (!detectionRows || detectionRows.length === 0) {
       return res.status(404).json({ error: 'Detection case not found' });
@@ -98,7 +101,7 @@ export const getDetectionCase = async (req, res) => {
   }
 };
 
-export const updateCase = async (req, res) => {
+export const updateCase = async (req: Request, res: Response) => {
   const { id } = req.params; // id here is fraud_prevention_id
   const token = req.headers.authorization?.replace('Bearer ', '');
 
@@ -109,7 +112,7 @@ export const updateCase = async (req, res) => {
 
   try {
     // Get primary id and current status using fraud_prevention_id
-    const [getDetectionId] = await pool.execute(
+    const [getDetectionId] = await pool.execute<RowDataPacket[]>(
       'SELECT id, status FROM fraud_detection WHERE fraud_prevention_id = ?',
       [id]
     );
@@ -129,7 +132,7 @@ export const updateCase = async (req, res) => {
     }
 
     // Decode token to get user id
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as tokenData;
     const userId = decoded.id;
 
     const {
@@ -202,7 +205,7 @@ export const updateCase = async (req, res) => {
 
   } catch (error) {
     console.error("Error updating fraud detection case:", error);
-    if (error.name === "JsonWebTokenError") {
+    if ((error as Error).name === "JsonWebTokenError") {
       return res.status(401).json({ error: "Invalid token" });
     }
     return res.status(500).json({ error: "Server error" });

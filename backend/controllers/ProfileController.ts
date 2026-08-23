@@ -1,11 +1,13 @@
+import { RowDataPacket } from 'mysql2';
 import pool from '../config/db.js';
+import { Response, Request } from 'express';
 
 export const changePassword = () => {};
 
-export const getProfile = async (req, res) => {
+export const getProfile = async (req: Request, res: Response) => {
 try {
     const user = req.user; // Get ID from token
-    const [dbUser] = await pool.query(
+    const [dbUser] = await pool.query<RowDataPacket[]>(
         `SELECT id, name, email, role FROM users WHERE id = ?`, 
         [user.id]
     );
@@ -16,7 +18,7 @@ try {
 }
 };
 
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req: Request, res: Response) => {
   const user = req.user;
   console.log(user.id)
   const { name, email } = req.body;

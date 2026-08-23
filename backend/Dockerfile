@@ -8,7 +8,7 @@ COPY package*.json ./
 RUN npm install
 # install the typescipt run time and dev dep
 RUN npm install typescript tsx
-RUN npm install -D @types/express @types/node @types/cors
+RUN npm install -D @types/express @types/node @types/cors @types/jsonwebtoken
 #copy all files to the working directory
 COPY . .
 #expose port 3000

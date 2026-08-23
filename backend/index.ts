@@ -2,9 +2,8 @@ import 'dotenv/config';
 //dotenv.config(); // call and declare the dotenv file
 
 // import express and declare the cors
-// @ts-ignore
 import express from 'express';
-// @ts-ignore
+
 import cors from 'cors';
 
 import incidentRoutes from './routes/incidentRoutes.js';

@@ -1,13 +1,11 @@
-import {userInfo} from 'node:os';
+import { Request, Response } from 'express';
 import pool from '../config/db.js';
+import { RowDataPacket } from 'mysql2';
 
 
-export const getUsers = async (req, res) => {
-  const cacheKey = 'all_users';//declare the cache key
+export const getUsers = async (req: Request, res: Response) => {
 
-
-  if (cached) return res.status (200).json (JSON.parse (cached));//if there is data then return it 
-  const [results] = await pool.query (
+  const [results] = await pool.query <RowDataPacket[]>(
     'SELECT u.*, a.* FROM users u LEFT JOIN access_rights a ON u.id = a.user_id'
   );
   results.forEach(user => delete user.password);//delete the user password from the db such that if's not sent to the frontend
@@ -16,7 +14,7 @@ export const getUsers = async (req, res) => {
   res.status (200).json ({results}); 
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req: Request, res: Response) => {
   let connection;
   try {
     connection = await pool.getConnection ();
@@ -78,7 +76,7 @@ export const updateUser = async (req, res) => {
     // Validate user exists
     const [
       validateUser,
-    ] = await connection.query (
+    ] = await connection.query <RowDataPacket[]>(
       `SELECT user_id FROM access_rights WHERE user_id = ?`,
       [user_id]
     );

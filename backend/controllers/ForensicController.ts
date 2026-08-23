@@ -1,7 +1,16 @@
 import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
+import { RowDataPacket } from "mysql2";
 
-export const referToDepartment = async (req, res) => {
+export interface tokenData {
+  id: number,
+  name: string,
+  email: string,
+  role: string
+}
+
+export const referToDepartment = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { referred_department, status, recommendations } = req.body;
@@ -22,7 +31,7 @@ export const referToDepartment = async (req, res) => {
 
 
 
-//export const closeForensicCase = async (req, res) => {
+//export const closeForensicCase = async (req: Request, res: Response) => {
 //try {
 //   const { id } = req.params;
 //   const { status } = req.body;
@@ -35,7 +44,7 @@ export const referToDepartment = async (req, res) => {
 // }
 //}
 
-export const closeCase = async (req, res) => {
+export const closeCase = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -49,12 +58,12 @@ export const closeCase = async (req, res) => {
   }
 };
 //
-export const returnPreliminary = async (req, res) => {
+export const returnPreliminary = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; // Changed from preli_id to id
     const { comments, status } = req.body;
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token!, process.env.SECRET_KEY!) as tokenData;
     const tokenId = decoded.id;
     const tokenName = decoded.name;
 
@@ -69,7 +78,7 @@ export const returnPreliminary = async (req, res) => {
     // First, get the forensic investigation by ID
     const getForensicSql =
       "SELECT id, preliminary_id FROM forensic_investigation_report WHERE id = ?";
-    const [forensicRows] = await connection.execute(getForensicSql, [id]);
+    const [forensicRows] = await connection.execute<RowDataPacket[]>(getForensicSql, [id]);
 
     if (forensicRows.length === 0) {
       connection.release();
@@ -116,12 +125,12 @@ export const returnPreliminary = async (req, res) => {
   }
 };
 //get a forensic case
-export const getForensic = async (req, res) => {
+export const getForensic = async (req: Request, res: Response) => {
   const { id } = req.params; // This is forensic report id from frontend
 
   try {
     // 1️⃣ Get preliminary_id for this forensic report
-    const [getPreliIdResult] = await pool.execute(
+    const [getPreliIdResult] = await pool.execute<RowDataPacket[]>(
       "SELECT preliminary_id FROM forensic_investigation_report WHERE id = ?",
       [id]
     );
@@ -133,7 +142,7 @@ export const getForensic = async (req, res) => {
     const preliminaryId = getPreliIdResult[0].preliminary_id;
 
     // 2️⃣ Fetch forensic report using preliminary_id
-    const [result] = await pool.execute(
+    const [result] = await pool.execute<RowDataPacket[]>(
       "SELECT * FROM forensic_investigation_report WHERE preliminary_id = ?",
       [preliminaryId]
     );
@@ -161,7 +170,7 @@ export const getForensic = async (req, res) => {
 
 
 
-export const updateForensic = async (req, res) => {
+export const updateForensic = async (req: Request, res: Response) => {
   const { id } = req.params; // forensic report id
   const {
     background,
@@ -186,7 +195,7 @@ export const updateForensic = async (req, res) => {
 
   try {
     // 1️⃣ Get the preliminary_id for this forensic report
-    const [getPreliIdResult] = await pool.execute(
+    const [getPreliIdResult] = await pool.execute<RowDataPacket[]>(
       "SELECT preliminary_id FROM forensic_investigation_report WHERE id = ?",
       [id]
     );
@@ -261,15 +270,15 @@ export const updateForensic = async (req, res) => {
 };
 
 
-export const verifyAccessReviewForensic = async (req, res) => {
+export const verifyAccessReviewForensic = async (req: Request, res: Response) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) return res.status(401).json({ message: "Token missing" });
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as tokenData;
     const tokenId = decoded.id;
     const sql = `SELECT review_forensic FROM access_rights WHERE user_id = ?`;
-    const [result] = await pool.query(sql, [tokenId]);
+    const [result] = await pool.query<RowDataPacket[]>(sql, [tokenId]);
     if (result.length === 0) {
       return res.status(403).json({ message: "User not found" });
     }
@@ -285,14 +294,14 @@ export const verifyAccessReviewForensic = async (req, res) => {
 };
 
 
-export const getPreliminary = async (req, res) => {
+export const getPreliminary = async (req: Request, res: Response) => {
 
 
   try {
     const user = req.user;
     const tokenId = user.id;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(String(req.query.page)) || 1;
+    const limit = parseInt(String(req.query.limit)) || 10;
     const offset = (page - 1) * limit
 
     const sql = `
@@ -365,13 +374,13 @@ select count(*) as total
     `;
 
 
-    const [totalInDb] = await pool.query(sqlTotal)
+    const [totalInDb] = await pool.query<RowDataPacket[]>(sqlTotal)
     const total = totalInDb[0].total;
-    const [result] = await pool.query(sql, [tokenId, limit, offset]);
+    const [result] = await pool.query<RowDataPacket[]>(sql, [tokenId, limit, offset]);
 
     // 🔥 ADD FULL COMMENTS ARRAY
-    for (let item of result) {
-      const [comments] = await pool.query(
+    for (let item of result as any) {
+      const [comments] = await pool.query<RowDataPacket[]>(
         `SELECT id, forensic_id, user_id, user_name, comment, created_at
          FROM forensic_comments
          WHERE forensic_id = ?
@@ -407,14 +416,14 @@ select count(*) as total
 
 
 
-export const getForensicReview = async (req, res) => {
+export const getForensicReview = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const authHeader = req.header("Authorization");
 
     if (!authHeader) return res.status(401).json({ error: "No token" });
     const token = authHeader?.replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as any;
     const tokenId = decoded.id;
 
     // Fetch ONLY forensic data, no preliminary joins
@@ -425,7 +434,7 @@ export const getForensicReview = async (req, res) => {
     WHERE f.id = ?
     LIMIT 1;
     `;
-    const [rows] = await pool.query(sql, [id]);
+    const [rows] = await pool.query<RowDataPacket[]>(sql, [id]);
     if (!rows.length) {
       return res
         .status(404)
@@ -450,18 +459,18 @@ export const getForensicReview = async (req, res) => {
   }
 };
 
-export const getForensics = async (req, res) => {
+export const getForensics = async (req: Request, res: Response) => {
   let connection;
   try {
 
     connection = await pool.getConnection();
 
-    const limit = parseInt(req.query.limit) || 10;
-    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(String(req.query.limit)) || 10;
+    const page = parseInt(String(req.query.page)) || 1;
     const offset = (page - 1) * limit;
-    const [resultTotal] = await connection.execute("SELECT COUNT(*) AS total FROM `forensic_investigation_report` WHERE 1");
+    const [resultTotal] = await connection.execute<RowDataPacket[]>("SELECT COUNT(*) AS total FROM `forensic_investigation_report` WHERE 1");
     const total = resultTotal[0].total;
-    const [cases] = await connection.query("SELECT * FROM forensic_investigation_report WHERE status = 'review' ORDER BY created_at DESC LIMIT ? OFFSET ?", [limit, offset]);
+    const [cases] = await connection.query<RowDataPacket[]>("SELECT * FROM forensic_investigation_report WHERE status = 'review' ORDER BY created_at DESC LIMIT ? OFFSET ?", [limit, offset]);
 
     // Fetch comments for all cases
     for (let c of cases) {
@@ -492,7 +501,7 @@ export const getForensics = async (req, res) => {
   }
 };
 
-export const getInvestigators = async (req, res) => {
+export const getInvestigators = async (req: Request, res: Response) => {
   try {
     const sql = `SELECT id, name, email FROM users WHERE role = 'fraud_prevention_investigator'`;
     const [results] = await pool.execute(sql);
@@ -506,7 +515,7 @@ export const getInvestigators = async (req, res) => {
 
 // Controllers/ForensicController.js
 
-export const assignInvestigator = async (req, res) => {
+export const assignInvestigator = async (req: Request, res: Response) => {
   const { id } = req.params; // forensic investigation ID
   const { assigned_to } = req.body; // investigator to assign
   const userName = req.user?.name || "System"; // assuming you set req.user from middleware
@@ -520,7 +529,7 @@ export const assignInvestigator = async (req, res) => {
     const investigationQuery = `
       SELECT * FROM forensic_investigation_report WHERE id = ?
     `;
-    const [investigationResult] = await pool.execute(investigationQuery, [id]);
+    const [investigationResult] = await pool.execute<RowDataPacket[]>(investigationQuery, [id]);
     if (investigationResult.length === 0) {
       return res.status(404).json({ message: "Investigation not found" });
     }
@@ -529,7 +538,7 @@ export const assignInvestigator = async (req, res) => {
     const investigatorQuery = `
       SELECT * FROM users WHERE id = ?
     `;
-    const [investigatorResult] = await pool.execute(investigatorQuery, [assigned_to]);
+    const [investigatorResult] = await pool.execute<RowDataPacket[]>(investigatorQuery, [assigned_to]);
     if (investigatorResult.length === 0) {
       return res.status(404).json({ message: "Investigator not found" });
     }
