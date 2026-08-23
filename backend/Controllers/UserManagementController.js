@@ -1,5 +1,5 @@
 import {userInfo} from 'node:os';
-import pool from '../config/db.js';
+import pool from '../config/db.ts';
 
 
 export const getUsers = async (req, res) => {

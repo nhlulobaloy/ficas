@@ -1,4 +1,4 @@
-import pool from '../config/db.js';
+import pool from '../config/db.ts';
 import jwt from 'jsonwebtoken';
 
 export const getPrevention = async (req, res) => {

@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../config/db.ts";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validator from "validator";
