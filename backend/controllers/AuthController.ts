@@ -86,28 +86,33 @@ export const refreshToken = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Refresh token required" });
     }
     const refreshKey = process.env.REFRESH_SECRET
-    // Verify refresh token
+    // Verify refresh token and generate a new one at the same time
     const tokenData = await generateToken(refreshToken, refreshKey!, 15)
 
-    // Check if exists in DB
+    // Check if the refresh token exists in the DB
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT * FROM refresh_tokens WHERE refreshToken = ? AND user_id = ?",
       [refreshToken, tokenData.id]
     );
 
-    if (rows.length === 0) {
-      return res.status(403).json({ message: "Invalid refresh token" });
-    }
+    if (rows.length === 0) return res.status(403).json({ message: "Invalid refresh token" });
 
+    // return the new token if all the check are passed
     res.json({ token: tokenData.token });
   } catch (error) {
     res.status(403).json({ message: "Invalid refresh token" });
   }
 };
 
-// generate token using one function to avoid repeating same code many times
+/**
+ * Verifies refresh token and generates a new access token
+ * @param token - Refresh token stored in HTTP-only cookie
+ * @param secretKey - Secret key for JWT verification and signing
+ * @param expireTime - Expiration time in minutes
+ * @returns New access token + decoded user data (id, name, email, role)
+ */
 const generateToken = async (token: string, secretKey: string, expireTime: number) => {
-
+  
   const decoded = jwt.verify(token, secretKey!) as any
   const newToken = jwt.sign(
     { id: decoded.id, name: decoded.name, email: decoded.email, role: decoded.role },
@@ -143,17 +148,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
       process.env.REFRESH_SECRET!,  // Different secret
       { expiresIn: "7d" }  // 7 days
     );
-    // create a new refresh token table
-    /**
-    CREATE TABLE refresh_tokens (
-      id INT PRIMARY KEY AUTO_INCREMENT,
-      user_id INT NOT NULL,
-      refreshToken VARCHAR(255) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    );
-     */
-    // store the refresh token in the db
+    
     await pool.query(
       "INSERT INTO refresh_tokens (user_id, refreshToken) VALUES (?, ?)",
       [user.id, refreshToken]
@@ -205,7 +200,7 @@ export const logout = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     // check if token exists
-    if(!user) return res.status(401).json({ "message": "invalid token"})
+    if (!user) return res.status(401).json({ "message": "invalid token" })
     // delete the user refresh token from the database using the user id
     const [result] = await pool.execute('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id])
     // clear the cookie in the browser
