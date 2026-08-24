@@ -3,7 +3,12 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
 
-
+export interface tokenData {
+  id: number,
+  name: string,
+  email: string,
+  role: string
+}
 
 export const referToDepartment = async (req: Request, res: Response) => {
   try {
@@ -58,7 +63,7 @@ export const returnPreliminary = async (req: Request, res: Response) => {
     const { id } = req.params; // Changed from preli_id to id
     const { comments, status } = req.body;
     const token = req.header("Authorization")?.replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token!, process.env.SECRET_KEY!) as tokenData;
     const tokenId = decoded.id;
     const tokenName = decoded.name;
 
@@ -270,7 +275,7 @@ export const verifyAccessReviewForensic = async (req: Request, res: Response) =>
     const token = req.header("Authorization")?.replace("Bearer ", "");
     if (!token) return res.status(401).json({ message: "Token missing" });
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as tokenData;
     const tokenId = decoded.id;
     const sql = `SELECT review_forensic FROM access_rights WHERE user_id = ?`;
     const [result] = await pool.query<RowDataPacket[]>(sql, [tokenId]);
@@ -295,7 +300,7 @@ export const getPreliminary = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const tokenId = user.id;
-    const page = parseInt (String(req.query.page)) || 1;
+    const page = parseInt(String(req.query.page)) || 1;
     const limit = parseInt(String(req.query.limit)) || 10;
     const offset = (page - 1) * limit
 
@@ -418,7 +423,7 @@ export const getForensicReview = async (req: Request, res: Response) => {
 
     if (!authHeader) return res.status(401).json({ error: "No token" });
     const token = authHeader?.replace("Bearer ", "");
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as any;
     const tokenId = decoded.id;
 
     // Fetch ONLY forensic data, no preliminary joins

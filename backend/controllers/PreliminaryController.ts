@@ -1,8 +1,9 @@
+import { RowDataPacket } from 'mysql2';
 import pool from '../config/db.js';
-import jwt from 'jsonwebtoken'
+import { Request, Response } from 'express';
 
 // Create Preliminary Investigation record
-export const createPreli = async (req, res) => {
+export const createPreli = async (req: Request, res: Response) => {
   try {
     const data = req.body;
     // Destructure the fields
@@ -30,7 +31,7 @@ export const createPreli = async (req, res) => {
     } = data;
 
     // Insert into database
-    const [result] = await pool.query(
+    const [result] = await pool.query<any>(
       `INSERT INTO preliminary_investigations 
       (incident_id, mandate, allegations, acknowledgement_details, case_category, case_subcategory, domicile_department,
       key_stakeholders, incident_scene, amount_involved, persons_to_notify, persons_featured,
@@ -64,7 +65,7 @@ export const createPreli = async (req, res) => {
       message: 'Preliminary Investigation created',
       id: result.insertId,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     res.status(500).json({
       message: 'Error creating Preliminary Investigation',
@@ -76,7 +77,7 @@ export const createPreli = async (req, res) => {
 
 
 //get a single prelimianary to 
-export const getPreli = async (req, res) => {
+export const getPreli = async (req: Request, res: Response) => {
   try {
     const { incident_id } = req.params;
 
@@ -108,7 +109,7 @@ export const getPreli = async (req, res) => {
       LIMIT 1
     `;
 
-    const [rows] = await pool.query(sql, [userId, incident_id]);
+    const [rows] = await pool.query<RowDataPacket[]>(sql, [userId, incident_id]);
 
     if (!rows.length) {
       return res
@@ -135,7 +136,7 @@ export const getPreli = async (req, res) => {
 
 
 // updatePreli.js
-export const updatePreli = async (req, res) => {
+export const updatePreli = async (req: Request, res: Response) => {
   const data = req.body;
   const incidentId = Number(data.incident_id);
   const user = req.user;
@@ -143,7 +144,7 @@ export const updatePreli = async (req, res) => {
   const userName = user.name;
   try {
     /* 1️⃣ CHECK INCIDENT + ASSIGNMENT */
-    const [incidentRows] = await pool.query(
+    const [incidentRows] = await pool.query<RowDataPacket[]>(
       `SELECT assigned_to FROM incidents WHERE id = ?`,
       [incidentId]
     );
@@ -155,7 +156,7 @@ export const updatePreli = async (req, res) => {
       return res.status(403).json({ error: "You are not assigned to this incident" });
 
     /* 2️⃣ CHECK PRELI STATUS */
-    const [preliRows] = await pool.query(
+    const [preliRows] = await pool.query<RowDataPacket[]>(
       `SELECT status FROM preliminary_investigations WHERE incident_id = ?`,
       [incidentId]
     );
@@ -208,7 +209,7 @@ export const updatePreli = async (req, res) => {
 };
 
 //gets a single prelininary for the updating team
-export const getPrelis = async (req, res) => {
+export const getPrelis = async (req: Request, res: Response) => {
   try {
     // Base SQL for all preliminaries
     let sql = `
@@ -253,12 +254,11 @@ export const getPrelis = async (req, res) => {
   }
 };
 
-export const referToDepartment = async (req, res) => {
+export const referToDepartment = async (req: Request, res: Response) => {
+  const { id } = req.params;
   try {
-
-    const { id } = req.params;
     const { referred_department, recommendations } = req.body;
-    const [sql1] = await pool.execute('SELECT id FROM preli_departments WHERE name = ?', [referred_department]);
+    const [sql1] = await pool.execute<RowDataPacket[]>('SELECT id FROM preli_departments WHERE name = ?', [referred_department]);
     if (sql1.length <= 0) return res.status(500).json({ message: 'Not found' })
     const preliId = sql1[0].id;
     const sql = 'UPDATE preliminary_investigations SET referred_department = ?, status = ?, recommendations = ? WHERE id = ?';
@@ -267,12 +267,12 @@ export const referToDepartment = async (req, res) => {
     res.status(200).json({ message: 'Case has been successfully assigned' })
 
   } catch (error) {
-    console.error({ error: error, id: id });
+    console.error({ error: error, id: id }) ;
     res.status(500).json(error)
   }
 }
 
-export const getPreliReviewTeam = async (req, res) => {
+export const getPreliReviewTeam = async (req: Request, res: Response) => {
   try {
 
     //this is the preliminary id not the incident id keep it this way don't change it
@@ -297,7 +297,7 @@ export const getPreliReviewTeam = async (req, res) => {
       LIMIT 1
     `;
 
-    const [rows] = await pool.query(sql, [incident_id]);
+    const [rows] = await pool.query<RowDataPacket[]>(sql, [incident_id]);
 
     if (!rows.length) {
       return res.status(404).json({ message: "Investigation not found" });
@@ -321,7 +321,7 @@ export const getPreliReviewTeam = async (req, res) => {
 };
 
 // In PreliminaryController.js
-export const getPreliminaryInvestigators = async (req, res) => {
+export const getPreliminaryInvestigators = async (req: Request, res: Response) => {
   try {
     const sql = `
       SELECT id, name, email 
@@ -340,14 +340,14 @@ export const getPreliminaryInvestigators = async (req, res) => {
 
 // Add to PreliminaryController.js
 
-export const getPreliminaries = async (req, res) => {
+export const getPreliminaries = async (req: Request, res: Response) => {
   try {
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(String(req.query.page)) || 1;
+    const limit = parseInt(String(req.query.limit)) || 10;
     const offset = (page - 1) * limit;
     //get the total of all the data that are the matches
-    const [getTotal] = await pool.query(`SELECT
+    const [getTotal] = await pool.query<RowDataPacket[]>(`SELECT
       COUNT(*) AS total
       FROM preliminary_investigations p
       LEFT JOIN incidents i ON p.incident_id = i.id
@@ -408,7 +408,7 @@ export const getPreliminaries = async (req, res) => {
       LIMIT ? OFFSET ?
       `;
 
-    const [result] = await pool.query(sql, [limit, offset]);
+    const [result] = await pool.query<RowDataPacket[]>(sql, [limit, offset]);
 
     // Map fields to match frontend expectations
     // Map fields to match frontend expectations
@@ -437,7 +437,7 @@ export const getPreliminaries = async (req, res) => {
 };
 
 
-export const returnPreliminary = async (req, res) => {
+export const returnPreliminary = async (req: Request, res: Response) => {
   try {
     const { preli_id } = req.params;
     const { comments } = req.body;
@@ -450,7 +450,7 @@ export const returnPreliminary = async (req, res) => {
     }
     const connection = await pool.getConnection();
     const sql = 'SELECT id FROM preliminary_investigations WHERE id = ?'
-    const [existing] = await connection.execute(sql, [preli_id]);
+    const [existing] = await connection.execute<RowDataPacket[]>(sql, [preli_id]);
     //verified preli id
     const preliID = existing[0].id
     if (existing.length === 0) {
@@ -479,14 +479,14 @@ export const returnPreliminary = async (req, res) => {
   }
 };
 
-export const approvePreliminary = async (req, res) => {
+export const approvePreliminary = async (req: Request, res: Response) => {
   try {
     const { preli_id } = req.params;
     const { approved_by } = req.body;
 
     const connection = await pool.getConnection();
 
-    const [existing] = await connection.execute(
+    const [existing] = await connection.execute<RowDataPacket[]>(
       'SELECT id FROM preliminary_investigations WHERE id = ?',
       [preli_id]
     );
@@ -506,7 +506,7 @@ export const approvePreliminary = async (req, res) => {
     );
 
 
-    const [check] = await connection.execute('SELECT * FROM forensic_investigation_report WHERE preliminary_id = ?', [preli_id])
+    const [check] = await connection.execute<RowDataPacket[]>('SELECT * FROM forensic_investigation_report WHERE preliminary_id = ?', [preli_id])
     if (check.length > 0) return
     const sql = 'INSERT INTO forensic_investigation_report (preliminary_id) VALUE(?)';
     const [create] = await connection.execute(sql, [preli_id]);
@@ -528,13 +528,13 @@ export const approvePreliminary = async (req, res) => {
 };
 
 
-export const verifyAccessReviewPreliminary = async (req, res) => {
+export const verifyAccessReviewPreliminary = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const tokenId = user.id;
 
     const sql = `SELECT review_preliminary FROM access_rights WHERE user_id = ?`;
-    const [result] = await pool.query(sql, [tokenId]);
+    const [result] = await pool.query<RowDataPacket[]>(sql, [tokenId]);
 
     if (result.length === 0) {
       return res.status(403).json({ message: 'User not found' });
@@ -550,7 +550,7 @@ export const verifyAccessReviewPreliminary = async (req, res) => {
 };
 
 
-export const verifyAccessUpdatePreliminary = async (res, req) => {
+export const verifyAccessUpdatePreliminary = async (req: Request, res: Response) => {
   try {
     // No token verification - just get data
     const sql = `
@@ -577,7 +577,7 @@ export const verifyAccessUpdatePreliminary = async (res, req) => {
 
 
 
-export const closeCase = async (req, res) => {
+export const closeCase = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -593,15 +593,15 @@ export const closeCase = async (req, res) => {
 
 
 //get the incidents assinged to a preliminary
-export const getIncidentsAssigned = async (req, res) => {
+export const getIncidentsAssigned = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const tokenId = user.id;
     
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = parseInt(String(req.query.page)) || 1;
+    const limit = parseInt(String(req.query.limit)) || 10;
     const offset = (page - 1) * limit;
-    const [getTotal] = await pool.query("SELECT COUNT(*) AS total FROM incidents where assigned_to = ?", [tokenId]);
+    const [getTotal] = await pool.query<RowDataPacket[]>("SELECT COUNT(*) AS total FROM incidents where assigned_to = ?", [tokenId]);
 
     const sql = `SELECT i.*, 
        u.name,
@@ -612,7 +612,7 @@ export const getIncidentsAssigned = async (req, res) => {
        ORDER BY u.id ASC
        LIMIT ? OFFSET ?
        `;
-    const [result] = await pool.query(sql, [tokenId, limit, offset]);
+    const [result] = await pool.execute<RowDataPacket[]>(sql, [tokenId, limit, offset]);
     const total = getTotal[0].total
     return res.status(200).json({
       message: 'success',
@@ -631,7 +631,7 @@ export const getIncidentsAssigned = async (req, res) => {
   }
 };
 
-export const getForensicInvestigators = async (req, res) => {
+export const getForensicInvestigators = async (req: Request, res: Response) => {
   try {
     const sql = `
       SELECT id, name, email 
@@ -649,7 +649,7 @@ export const getForensicInvestigators = async (req, res) => {
 };
 
 
-export const assignInvestigator = async (req, res) => {
+export const assignInvestigator = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { assigned_to, assigned_investigator_name, status } = req.body;

@@ -1,7 +1,8 @@
 import { Response, Request } from 'express';
 import pool from '../config/db.js';
 import jwt from 'jsonwebtoken';
-import { QueryResult, RowDataPacket } from 'mysql2';
+import { RowDataPacket } from 'mysql2';
+import { tokenData } from './ForensicController.js';
 
 export const getForensic = async (req: Request, res: Response) => {
   let connection;
@@ -132,7 +133,7 @@ export const updateCase = async (req: Request, res: Response) => {
     }
 
     // Decode token to get user id
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY!) as tokenData;
     const userId = decoded.id;
 
     const {

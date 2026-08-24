@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-
 // declare the global interface along with the types
 declare global {
-    namespace  Express {
+    namespace Express {
         interface Request {
             user : {
                 id: number,
@@ -15,12 +14,13 @@ declare global {
         }
     }
 }
+// this middleware verifies the token on every request send to the backend
 export const authMiddleware= (req: Request, res: Response, next: NextFunction) => {
-    //get the token from the authorization
+    // get the token from the authorization
     const authHeader = req.header("Authorization")?.replace("Bearer ", "");
     if(!authHeader) return res.status(401).json({message: 'No token found! check'});
     try {
-        const decoded = jwt.verify(authHeader, process.env.SECRET_KEY)
+        const decoded = jwt.verify(authHeader, process.env.SECRET_KEY!) as any 
         req.user = {
             id: decoded.id,
             name: decoded.name,  
@@ -31,6 +31,9 @@ export const authMiddleware= (req: Request, res: Response, next: NextFunction) =
         //move from the middleware and continue to what comes after it
         next();
     } catch (error) {
-        return res.status(403).json({message: error})
+    if (error instanceof Error && error.name === "TokenExpiredError") {
+        return res.status(401).json({ message: "Token expired" });
     }
+    return res.status(403).json({ message: "Invalid token" });
+}
 }    

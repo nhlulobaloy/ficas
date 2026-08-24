@@ -1,9 +1,9 @@
 import pool from '../config/db.js';
-import jwt from "jsonwebtoken";
+import { Request, Response } from 'express';
 
 
 //get all the user
-export const getUsers = async (req, res) => {
+export const getUsers = async (req: Request, res: Response) => {
     try {
         const sql = `SELECT 
                        id,
