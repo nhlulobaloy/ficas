@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/Incident.css";
 import { useNavigate } from "react-router-dom";
-import{ apiBackend }from '../api/api.ts';
+import{ apiBackend, apiCall }from '../api/api';
 
 interface Category {
   id: number;
@@ -41,7 +41,7 @@ export default function Incident() {
     sapsNumber,
   };
 
-  // --- Secure verification ---
+  // Secure verification
   const verifyAccess = async (): Promise<boolean> => {
     if (!token) {
       navigate("/login"); // logout only if no token
@@ -50,14 +50,11 @@ export default function Incident() {
 
     try {
       // Verify role + token in backend
-      const res = await fetch(
+      const res = await apiCall(
         `${apiBackend}/incidents/`,
         {
           method: "POST",
-          headers: { 
-            'Content-type' : 'application/json',
-            Authorization: `Bearer ${token}`},
-        },
+        }
       );
 
       const data = await res.json();
@@ -77,19 +74,15 @@ export default function Incident() {
     }
   };
 
-  // --- Handle submit ---
+  // Handle submit
   const handleSubmit = async () => {
     const access = await verifyAccess();
     if (!access) return;
 
     try {
-      const res = await fetch(
+      const res = await apiCall(
         `${apiBackend}/incidents`,{
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify(userData),
         },
       );
@@ -119,16 +112,14 @@ export default function Incident() {
     }
   };
 
-  // --- On mount: verify access & fetch categories ---
+  // On mount: verify access & fetch categories
   useEffect(() => {
     const init = async () => {
       const access = await verifyAccess();
       if (!access) return;
 
       try {
-        const res = await fetch(`${apiBackend}/categories/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await apiCall(`${apiBackend}/categories/`);
         const categories = await res.json();
         setOptionCategory(categories);
       } catch (err) {
@@ -139,7 +130,7 @@ export default function Incident() {
     init();
   }, [token]);
 
-  // --- White screen if role denied ---
+  // White screen if role denied
   if (hasAccess === false) return null;
   return (
     <><h2 className="dashboard-title">Create Incident</h2>
