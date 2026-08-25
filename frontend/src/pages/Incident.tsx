@@ -80,8 +80,7 @@ export default function Incident() {
     if (!access) return;
 
     try {
-      const res = await apiCall(
-        `${apiBackend}/incidents`,{
+      const res = await apiCall(`${apiBackend}/incidents`, {
           method: "POST",
           body: JSON.stringify(userData),
         },

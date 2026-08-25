@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/PreliminaryInvestigation.css";
-import{ apiBackend }from '../api/api.ts';
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Category {
   id: number;
@@ -88,10 +88,7 @@ export default function PreliminaryInvestigation() {
 
       try {
         // Incident details
-        const incidentRes = await fetch(
-          `${apiBackend}/incidents/${incident_id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const incidentRes = await apiCall(`${apiBackend}/incidents/${incident_id}`);
         if (incidentRes.ok) {
           const incidentData = await incidentRes.json();
           setIncidentDetails(incidentData.data);
@@ -99,17 +96,14 @@ export default function PreliminaryInvestigation() {
 
         // Categories and departments
         const [catRes, deptRes] = await Promise.all([
-          fetch("${apiBackend}/preli/categories"),
-          fetch("${apiBackend}/preli/departments"),
+          apiCall("${apiBackend}/preli/categories"),
+          apiCall("${apiBackend}/preli/departments"),
         ]);
         setPreliCategories(await catRes.json());
         setPreliDepartments(await deptRes.json());
 
         // Preliminary investigation data
-        const preliRes = await fetch(
-          `${apiBackend}/preliminary/case/${incident_id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const preliRes = await apiCall(`${apiBackend}/preliminary/case/${incident_id}`);
 
         if (preliRes.ok) {
           const preliData = await preliRes.json();
@@ -161,10 +155,7 @@ export default function PreliminaryInvestigation() {
   useEffect(() => {
     const fetchSubcategories = async () => {
       if (!formData.case_category) return setPreliSubcategories([]);
-      const res = await fetch(
-        `${apiBackend}/preli/subcategories?category=${formData.case_category}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const res = await apiCall(`${apiBackend}/preli/subcategories?category=${formData.case_category}`);
       const data = await res.json();
       setPreliSubcategories(data || []);
     };
@@ -191,12 +182,8 @@ export default function PreliminaryInvestigation() {
         ? `${apiBackend}/preliminary/${incident_id}`
         : `${apiBackend}/preliminary/`;
 
-      const res = await fetch(url, {
+      const res = await apiCall(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(dataToSend),
       });
 

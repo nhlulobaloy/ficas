@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/PreliminaryInvestigation.css";
-import{ apiBackend }from '../api/api.ts';
+import{ apiBackend, apiCall } from '../api/api.ts';
 
 interface Category {
   id: number;
@@ -77,13 +77,10 @@ export default function DraftFraudDetection() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const deptRes = await fetch(`${apiBackend}/preli/departments`);
+        const deptRes = await apiCall(`${apiBackend}/preli/departments`);
         setPreliDepartments(await deptRes.json());
 
-        const fraudRes = await fetch(
-          `${apiBackend}/fraud/detection/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const fraudRes = await apiCall(`${apiBackend}/fraud/detection/${id}`);
 
         if (fraudRes.ok) {
           const fraudData = await fraudRes.json();
@@ -137,14 +134,9 @@ export default function DraftFraudDetection() {
         conducted_by: userName || formData.conducted_by,
       };
 
-      const res = await fetch(
-        `${apiBackend}/fraud/detection/case/update/${id}`,
+      const res = await apiCall(`${apiBackend}/fraud/detection/case/update/${id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify(dataToSend),
         }
       );

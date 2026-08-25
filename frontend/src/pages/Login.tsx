@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import{ apiBackend }from '../api/api.ts';
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,17 +18,16 @@ export default function Login() {
     setLoading(true);
     try {
       const userData = { email, password };
-      const res = await fetch(`${apiBackend}/auth/login`, {
-        method: "POST",
+      const res = await axios.post(`${apiBackend}/auth/login`,userData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        
       });
 
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (res.status !== 200) {
         alert("Error: " + data.message);
         return;
       }

@@ -4,7 +4,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import "../styles/Preliminary.css";
 import "../styles/ReviewIncident.css";
-import{ apiBackend }from '../api/api.ts';
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Comment {
   id: number;
@@ -65,10 +65,7 @@ export default function Forensic() {
   useEffect(() => {
     const fetchInvestigations = async () => {
       try {
-        const res = await fetch(
-          `${apiBackend}/forensic?limit=${limit}&page=${currentPage}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await apiCall(`${apiBackend}/forensic?limit=${limit}&page=${currentPage}`);
         if (!res.ok) throw new Error("Fetch failed");
         const json = await res.json();
         setData(json.data || []);

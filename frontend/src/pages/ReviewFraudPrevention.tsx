@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/PreliminaryReview.css";
-import{ apiBackend }from '../api/api.ts';
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Comment {
   id: number;
@@ -77,15 +77,10 @@ export default function ReviewFraudPrevention() {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // ✅ Access verification function
+  // Access verification function
   const verifyAccess = async () => {
     try {
-      const res = await fetch(
-        `{apiBackend}/fraud/prevention/auth/access`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await apiCall(`${apiBackend}/fraud/prevention/auth/access`);
       if (res.status === 401) {
         navigate("/login");
         return false;
@@ -105,7 +100,7 @@ export default function ReviewFraudPrevention() {
   // Fetch Investigators
   const fetchInvestigators = async () => {
     try {
-      const res = await fetch(`{apiBackend}/fraud/prevention/investigators/prevention`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await apiCall(`${apiBackend}/fraud/prevention/investigators/prevention`);
       const data = await res.json();
       setInvestigators(data.results || []);
     } catch (err) { console.error(err); }
@@ -114,7 +109,7 @@ export default function ReviewFraudPrevention() {
   // Fetch Departments
   const fetchDepartments = async () => {
     try {
-      const res = await fetch(`{apiBackend}/preli/departments`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await apiCall(`${apiBackend}/preli/departments`);
       const data = await res.json();
       setDepartments(data.data || data || []);
     } catch (err) { console.error(err); }
@@ -127,7 +122,7 @@ export default function ReviewFraudPrevention() {
       const allowed = await verifyAccess();
       if (!allowed) return;
 
-      const res = await fetch(`{apiBackend}/fraud/prevention/review/prevention`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await apiCall(`${apiBackend}/fraud/prevention/review/prevention`);
       const data = await res.json();
       setInvestigations(data.results || []);
       setFilteredInvestigations(data.results || []);
@@ -177,7 +172,7 @@ export default function ReviewFraudPrevention() {
   // View single investigation
   const handleView = async (id: number) => {
     try {
-      const res = await fetch(`{apiBackend}/fraud/prevention/review/case/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await apiCall(`${apiBackend}/fraud/prevention/review/case/${id}`);
       const data = await res.json();
       if (res.ok) {
         setSelectedInvestigation(data.results);
@@ -209,9 +204,8 @@ export default function ReviewFraudPrevention() {
   const handleCloseCase = async (id: number) => {
     const userName = localStorage.getItem("name") || "User";
     try {
-      const res = await fetch(`{apiBackend}/fraud/prevention/close/case/${id}`, {
+      const res = await apiCall(`${apiBackend}/fraud/prevention/close/case/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: "closed", conducted_by: userName }),
       });
       if (res.ok) {
@@ -228,9 +222,8 @@ export default function ReviewFraudPrevention() {
     if (!selectedDepartment) { setSessionMessage("Please select a department"); setTimeout(() => setSessionMessage(""), 3000); return; }
     const selectedDept = departments.find(d => d.id === parseInt(selectedDepartment));
     try {
-      const res = await fetch(`{apiBackend}/fraud/prevention/refer/case/${id}`, {
+      const res = await apiCall(`${apiBackend}/fraud/prevention/refer/case/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ referred_department: selectedDept?.id, status: "approved", recommendations: "refer" }),
       });
       if (res.ok) {
@@ -248,9 +241,8 @@ export default function ReviewFraudPrevention() {
     const selectedInv = investigators.find(inv => inv.id.toString() === selectedInvestigator);
     if (!selectedInv) { setSessionMessage("Please select a valid investigator"); setTimeout(() => setSessionMessage(""), 3000); return; }
     try {
-      const res = await fetch(`{apiBackend}/fraud/prevention/assign/${id}`, {
+      const res = await apiCall(`${apiBackend}/fraud/prevention/assign/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ assigned_to: selectedInv.id, conducted_by: selectedInv.name, status: "review" }),
       });
       if (res.ok) {
@@ -267,9 +259,8 @@ export default function ReviewFraudPrevention() {
   const handleReturnToInvestigator = async () => {
     if (!selectedInvestigation || !returnComments.trim()) { setSessionMessage("Please provide comments for return"); return; }
     try {
-      const res = await fetch(`{apiBackend}/fraud/prevention/return/case/${selectedInvestigation.id}`, {
+      const res = await apiCall(`${apiBackend}/fraud/prevention/return/case/${selectedInvestigation.id}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ comments: returnComments, status: "returned" }),
       });
       if (res.ok) {
@@ -287,7 +278,7 @@ export default function ReviewFraudPrevention() {
     } catch (err) { console.error(err); setSessionMessage("Server error"); }
   };
 
-  // ================== RENDER ==================
+  // RENDER
   if (loading) return <div className="loading">Loading...</div>;
   if (!investigations.length) return <div className="no-data">No fraud prevention investigations found</div>;
 

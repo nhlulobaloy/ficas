@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ReviewIncident.css";
-import{ apiBackend }from '../api/api.ts';
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 
 interface Incident {
@@ -68,9 +68,7 @@ const verifyAccess = async () => {
   }
 
   try {
-    const res = await fetch("{apiBackend}/api/incidents/auth/access", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await apiCall(`${apiBackend}/api/incidents/auth/access`);
     //const data = await res.json();
 
     if (res.status !== 200) {
@@ -99,15 +97,9 @@ const verifyAccess = async () => {
 
     try {
       const [incRes, invRes, depRes] = await Promise.all([
-        fetch(`${apiBackend}/api/incidents?page=${currentPage}&limit=${itemsPerPage}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        fetch(`${apiBackend}/api/incidents/api/investigators`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        fetch(`${apiBackend}/api/preli/departments`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        apiCall(`${apiBackend}/api/incidents?page=${currentPage}&limit=${itemsPerPage}`),
+        apiCall(`${apiBackend}/api/incidents/api/investigators`),
+        apiCall(`${apiBackend}/api/preli/departments`)
       ]);
 
       const incidentsData = await incRes.json();
@@ -169,12 +161,8 @@ const verifyAccess = async () => {
         return;
       }
 
-      const res = await fetch(`{apiBackend}/api/incidents/${incidentId}`, {
+      const res = await apiCall(`${apiBackend}/api/incidents/${incidentId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
         body: JSON.stringify(updateData)
       });
 

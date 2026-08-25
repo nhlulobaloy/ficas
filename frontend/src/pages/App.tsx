@@ -13,7 +13,7 @@ import DraftFraudPrevention from "../pages/DraftFraudPrevention";
 import Forensic from "../pages/Forensic";
 import ReviewForensic from "../pages/ReviewForensic";
 import DraftForensic from "../pages/DraftForensic";
-import { Review_Incident } from "./Review-Incident";
+import { Review_Incident } from "./ReviewIncident";
 import ReviewFraudPrevention from "../pages/ReviewFraudPrevention";
 import FraudPrevention from "../pages/FraudPrevention";
 import FraudDetection from "../pages/FraudDetection";

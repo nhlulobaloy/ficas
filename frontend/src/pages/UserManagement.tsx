@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/UserManagement.css";
 import axios from "axios";
-import{ apiBackend }from '../api/api.ts';
+import { apiBackend, apiCall } from '../api/api.ts';
 
 
 interface User {
@@ -68,21 +68,16 @@ export default function UserManagement() {
   };
 
   const updateUser = async () => {
-   const res = await axios.post(`${apiBackend}/user/management/update`,{
-  selectedUser},
-    {headers: {
-      Authorization: `Bearer ${token}`
-    }
-   })
-  } 
+    const res = await apiCall(`${apiBackend}/user/management/update`, {
+      method: 'POST',
+      data: JSON.stringify(selectedUser)
+    },
+    )
+  }
   const getUsers = async () => {
-    const res = await axios.get(`${apiBackend}/user/management`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setUserData(res.data.results);
+    const res = await apiCall(`${apiBackend}/user/management`);
+    const data = await res.json();
+    setUserData(data.results);
   };
   useEffect(() => {
     getUsers();
@@ -149,16 +144,16 @@ export default function UserManagement() {
                 <h3>User Details</h3>
                 <p>ID: {selectedUser.id}</p>
                 <p>Name: {selectedUser.name}</p>
-                
+
                 <div>
                   <div>
                     <label>Role</label>
                     <select
-                    value={selectedUser.role}
-                    onChange={(e) => setSelectedUser({
-                      ...selectedUser,
-                      role: (e.target.value)
-                    })}
+                      value={selectedUser.role}
+                      onChange={(e) => setSelectedUser({
+                        ...selectedUser,
+                        role: (e.target.value)
+                      })}
                     >
                       <option value={"user"}>user</option>
                       <option value={"fraud_prevention_investigator"}>Fraud Prevention Investigator</option>
@@ -195,8 +190,8 @@ export default function UserManagement() {
                         })
                       }
                     >
-                    <option value={0}>No</option>
-                    <option value={1}>Yes</option>
+                      <option value={0}>No</option>
+                      <option value={1}>Yes</option>
                     </select>
                   </div>
                   <div>
@@ -210,8 +205,8 @@ export default function UserManagement() {
                         })
                       }
                     >
-                    <option value={0}>No</option>
-                    <option value={1}>Yes</option>
+                      <option value={0}>No</option>
+                      <option value={1}>Yes</option>
                     </select>
                   </div>
                   <div>
@@ -313,9 +308,11 @@ export default function UserManagement() {
                 >
                   Close
                 </button>
-                <button className="popup-save-button" onClick={()=> {updateUser()
+                <button className="popup-save-button" onClick={() => {
+                  updateUser()
 
-                setShowPopUp(false)}
+                  setShowPopUp(false)
+                }
                 }>Save</button>
               </div>
             </div>
@@ -330,9 +327,8 @@ export default function UserManagement() {
 
             {message && (
               <div
-                className={`alert ${
-                  message.includes("success") ? "alert-success" : "alert-error"
-                }`}
+                className={`alert ${message.includes("success") ? "alert-success" : "alert-error"
+                  }`}
               >
                 {message}
               </div>
@@ -344,7 +340,7 @@ export default function UserManagement() {
                 type="text"
                 placeholder="Enter full name"
                 value={name}
-                onChange={(e) => setName(e.target.value) }
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
 
