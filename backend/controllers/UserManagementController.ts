@@ -1,59 +1,56 @@
 import { Request, Response } from 'express';
 import pool from '../config/db.js';
 import { RowDataPacket } from 'mysql2';
+import { getAllUsersAR } from '../models/userModel.js';
 
-
+// get all the users with their access rights
 export const getUsers = async (req: Request, res: Response) => {
-
-  const [results] = await pool.query <RowDataPacket[]>(
-    'SELECT u.*, a.* FROM users u LEFT JOIN access_rights a ON u.id = a.user_id'
-  );
-  results.forEach(user => delete user.password);//delete the user password from the db such that if's not sent to the frontend
-
-
-  res.status (200).json ({results}); 
+  try {
+    const users = await getAllUsersAR();
+    res.status(200).json({ results: users });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+    console.error('an internal error has occured please try again later', error)
+  }
 };
 
 export const updateUser = async (req: Request, res: Response) => {
   let connection;
   try {
-    connection = await pool.getConnection ();
-
-    const {selectedUser} = req.body;
-
+    connection = await pool.getConnection();
+    const { selectedUser } = req.body;
     if (!selectedUser) {
-      return res.status (400).json ({error: 'No selectedUser provided'});
+      return res.status(400).json({ error: 'No selectedUser provided' });
     }
-
     // Convert all permission fields to Strings
     const StringUser = {
       ...selectedUser,
       create_incident: selectedUser.create_incident
-        ? String (selectedUser.create_incident)
+        ? String(selectedUser.create_incident)
         : '0',
       assign_incident: selectedUser.assign_incident
-        ? String (selectedUser.assign_incident)
+        ? String(selectedUser.assign_incident)
         : '0',
       update_preliminary: selectedUser.update_preliminary
-        ? String (selectedUser.update_preliminary)
+        ? String(selectedUser.update_preliminary)
         : '0',
       review_preliminary: selectedUser.review_preliminary
-        ? String (selectedUser.review_preliminary)
+        ? String(selectedUser.review_preliminary)
         : '0',
       review_forensic: selectedUser.review_forensic
-        ? String (selectedUser.review_forensic)
+        ? String(selectedUser.review_forensic)
         : '0',
       fraud_prevention_draft: selectedUser.fraud_prevention_draft
-        ? String (selectedUser.fraud_prevention_draft)
+        ? String(selectedUser.fraud_prevention_draft)
         : '0',
       fraud_prevention_review: selectedUser.fraud_prevention_review
-        ? String (selectedUser.fraud_prevention_review)
+        ? String(selectedUser.fraud_prevention_review)
         : '0',
       fraud_detection_draft: selectedUser.fraud_detection_draft
-        ? String (selectedUser.fraud_detection_draft)
+        ? String(selectedUser.fraud_detection_draft)
         : '0',
       fraud_detection_review: selectedUser.fraud_detection_review
-        ? String (selectedUser.fraud_detection_review)
+        ? String(selectedUser.fraud_detection_review)
         : '0',
     };
 
@@ -76,13 +73,13 @@ export const updateUser = async (req: Request, res: Response) => {
     // Validate user exists
     const [
       validateUser,
-    ] = await connection.query <RowDataPacket[]>(
+    ] = await connection.query<RowDataPacket[]>(
       `SELECT user_id FROM access_rights WHERE user_id = ?`,
       [user_id]
     );
 
     if (!validateUser.length) {
-      return res.status (404).json ({error: 'User not found in access_rights'});
+      return res.status(404).json({ error: 'User not found in access_rights' });
     }
 
     // Update query
@@ -100,7 +97,7 @@ export const updateUser = async (req: Request, res: Response) => {
       WHERE user_id = ?
     `;
 
-    await connection.query (sql, [
+    await connection.query(sql, [
       create_incident,
       assign_incident,
       update_preliminary,
@@ -113,11 +110,11 @@ export const updateUser = async (req: Request, res: Response) => {
       user_id,
     ]);
 
-    res.status (200).json ({message: 'User permissions updated successfully'});
+    res.status(200).json({ message: 'User permissions updated successfully' });
   } catch (error) {
-    console.log (error);
-    res.status (500).json ({error: 'Server error'});
+    console.log(error);
+    res.status(500).json({ error: 'Server error' });
   } finally {
-    if (connection) connection.release ();
+    if (connection) connection.release();
   }
 };
