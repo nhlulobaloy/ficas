@@ -1,7 +1,7 @@
 import { RowDataPacket } from 'mysql2';
 import pool from '../config/db.js';
 import { Response, Request, NextFunction } from 'express';
-import { insertIncident } from '../models/incidentModel.js';
+import { getInvestigators, insertIncident } from '../models/incidentModel.js';
 
 
 export const createIncident = async (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +33,6 @@ export const createIncident = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-// In incidentController.js
 export const getIncident = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {incident_id} = req.params;
@@ -283,15 +282,9 @@ export const verifyAccessAssign = async (req: Request, res: Response, next: Next
 
 export const getIncidentInvestigators = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const sql = `
-      SELECT id, name, email 
-      FROM users 
-      WHERE role = 'preliminary_investigator'
-      ORDER BY name
-    `;
-
-    const [rows] = await pool.query (sql);
-    return res.json ({message: 'success', data: rows});
+    const investigators = await getInvestigators();
+    if(!investigators) return res.status(404).json({ message: 'No investigators found'})
+    return res.json ({message: 'success', data: investigators});
   } catch (error) {
     console.error ('DB Error:', error);
     return res.status (500).json ({error: 'Failed to get investigators'});
