@@ -1,6 +1,7 @@
 import { RowDataPacket } from 'mysql2';
 import pool from '../config/db.js';
 import { Response, Request, NextFunction } from 'express';
+import { insertIncident } from '../models/incidentModel.js';
 
 
 export const createIncident = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,52 +19,13 @@ export const createIncident = async (req: Request, res: Response, next: NextFunc
       sapsNumber,
     } = req.body;
 
-    // 1. Insert incident
-    const sql = `
-      INSERT INTO incidents (
-        complainant_name, complainant_email, complainant_contact,
-        incident_date, incident_time, location, category,
-        details, suspect_details, ssaps_case_number
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const [result] = await pool.query <any>(sql, [
-      name,
-      email,
-      contact,
-      date,
-      time,
-      location,
-      selectedCategory,
-      details,
-      suspectDetails,
-      sapsNumber,
-    ]);
-
-    // 2. Generate short incident number with date
-    const today = new Date ();
-    const year = today.getFullYear ();
-    const month = String (today.getMonth () + 1).padStart (2, '0');
-    const day = String (today.getDate ()).padStart (2, '0');
-    const incidentNumber = `INC-${year}${month}${day}-${result.insertId}`;
-
-    // 3. Update with incident number
-    await pool.query ('UPDATE incidents SET incident_number = ? WHERE id = ?', [
-      incidentNumber,
-      result.insertId,
-    ]);
-
-    // 4. Automatically insert a preliminary investigation row
-    await pool.query (
-      `INSERT INTO preliminary_investigations (incident_id) VALUES (?)`,
-      [result.insertId]
-    );
+    const newIncident = await insertIncident(req.body);
 
     // 5. Response
     return res.status (201).json ({
       message: 'Incident created',
-      incident_number: incidentNumber,
-      id: result.insertId,
+      incident_number: newIncident.incidentNumber,
+      id: newIncident.id,
     });
   } catch (error) {
     console.error ('DB Error:', error);
