@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { getAllUsers } from '../models/userModel.js';
 
-// get all the user
+// get all the users
 export const getUsers = async (req: Request, res: Response) => {
     try {
         const results = await getAllUsers();

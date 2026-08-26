@@ -4,13 +4,14 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import { NextFunction, Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
+import { checkUserExists, createUser, findByEmail } from "../models/userModel.js";
+
 
 export const SignUp = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
-    /* -------------------- Input Validation -------------------- */
-
+    // Input Validation
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -39,30 +40,19 @@ export const SignUp = async (req: Request, res: Response) => {
       });
     }
 
-    /* -------------------- Check Existing User -------------------- */
-
-    const [existingUser] = await pool.query(
-      "SELECT id FROM users WHERE email = ? LIMIT 1",
-      [email]
-    ) as any;
-
-    if (existingUser.length > 0) {
+    // Check Existing User
+    const user = await checkUserExists(email);
+    if (user) {
       return res.status(409).json({
         success: false,
         message: "Email already registered."
       });
     }
 
-    /* -------------------- Hash Password -------------------- */
-
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    /* -------------------- Insert User -------------------- */
-
-    await pool.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name.trim(), email.toLowerCase(), hashedPassword]
-    );
+    // Insert User into the db
+    const newUser = await createUser({ name, email, password });
+    // check if the user is return
+    if (!newUser) return res.status(500).json({ message: 'Internal server error' })
 
     return res.status(201).json({
       success: true,
@@ -71,13 +61,13 @@ export const SignUp = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error("SignUp Error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Internal server error."
     });
   }
 };
+
 // refresh token
 export const refreshToken = async (req: Request, res: Response) => {
   try {
@@ -112,7 +102,7 @@ export const refreshToken = async (req: Request, res: Response) => {
  * @returns New access token + decoded user data (id, name, email, role)
  */
 const generateToken = async (token: string, secretKey: string, expireTime: number) => {
-  
+
   const decoded = jwt.verify(token, secretKey!) as any
   const newToken = jwt.sign(
     { id: decoded.id, name: decoded.name, email: decoded.email, role: decoded.role },
@@ -127,12 +117,11 @@ const generateToken = async (token: string, secretKey: string, expireTime: numbe
 export const Login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    const sql = `SELECT * FROM users WHERE email = ?`;
-    const [result] = await pool.query<RowDataPacket[]>(sql, [email]);
-    if (result.length === 0)
+    const findUserByEmail = await findByEmail(email) 
+    if (findUserByEmail.length === 0)
       return res.status(401).json({ message: "Invalid credentials" });
 
-    const user = result[0];
+    const user = findUserByEmail[0];
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(401).json({ message: "Invalid credentials" });
@@ -148,7 +137,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
       process.env.REFRESH_SECRET!,  // Different secret
       { expiresIn: "7d" }  // 7 days
     );
-    
+
     await pool.query(
       "INSERT INTO refresh_tokens (user_id, refreshToken) VALUES (?, ?)",
       [user.id, refreshToken]
