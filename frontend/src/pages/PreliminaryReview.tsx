@@ -1,7 +1,7 @@
 /* PreliminaryReview.tsx */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/PreliminaryReview.css";
+import "../../styles/PreliminaryReview.css";
 import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface PreliminaryComment {

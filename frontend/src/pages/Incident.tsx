@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../styles/Incident.css";
+import "../../styles/Incident.css";
 import { useNavigate } from "react-router-dom";
 import{ apiBackend, apiCall }from '../api/api';
 

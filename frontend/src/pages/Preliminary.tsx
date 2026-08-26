@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import "../styles/Preliminary.css";
-import "../styles/ReviewIncident.css";
+import "../../styles/Preliminary.css";
+import "../../styles/ReviewIncident.css";
 import{ apiBackend, apiCall }from '../api/api.ts';
 
 

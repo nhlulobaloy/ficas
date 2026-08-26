@@ -6,16 +6,22 @@ import homeData from '../../data/HomePageData.json'
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
     }
+    setIsMenuOpen(false);
   };
 
   const toggleDropdown = (section: string) => {
     setOpenDropdown(openDropdown === section ? null : section);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const styles = {
@@ -25,11 +31,9 @@ const Home: React.FC = () => {
       backgroundColor: "#f7fafc",
       minHeight: "100vh",
     },
-
-    // NAVBAR
     navbar: {
       backgroundColor: "#ffffff",
-      padding: "16px 40px",
+      padding: "16px 24px",
       display: "flex" as const,
       justifyContent: "space-between" as const,
       alignItems: "center" as const,
@@ -37,6 +41,7 @@ const Home: React.FC = () => {
       position: "sticky" as const,
       top: 0,
       zIndex: 100,
+      flexWrap: "wrap" as const,
     },
     logo: {
       fontSize: "20px",
@@ -71,10 +76,56 @@ const Home: React.FC = () => {
       cursor: "pointer",
       transition: "background-color 0.2s",
     },
-
-    // HERO
+    hamburger: {
+      display: "none" as const,
+      flexDirection: "column" as const,
+      gap: "5px",
+      cursor: "pointer",
+      padding: "4px",
+      background: "none",
+      border: "none",
+    },
+    hamburgerLine: {
+      width: "25px",
+      height: "2px",
+      backgroundColor: "#1a202c",
+      transition: "all 0.3s ease",
+    },
+    mobileMenu: {
+      display: "none" as const,
+      flexDirection: "column" as const,
+      gap: "16px",
+      padding: "16px 0",
+      width: "100%" as const,
+      borderTop: "1px solid #e2e8f0",
+      marginTop: "12px",
+    },
+    mobileMenuOpen: {
+      display: "flex" as const,
+    },
+    mobileLink: {
+      color: "#4a5568",
+      textDecoration: "none",
+      fontSize: "16px",
+      fontWeight: 500,
+      cursor: "pointer",
+      padding: "8px 0",
+      transition: "color 0.2s",
+    },
+    mobileLogin: {
+      backgroundColor: "#2b6cb0",
+      color: "#ffffff",
+      border: "none",
+      padding: "10px 24px",
+      borderRadius: "4px",
+      fontSize: "16px",
+      fontWeight: 600,
+      cursor: "pointer",
+      width: "100%" as const,
+      textAlign: "center" as const,
+    },
     hero: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#f7fafc",
       display: "flex" as const,
       justifyContent: "center" as const,
@@ -86,7 +137,7 @@ const Home: React.FC = () => {
       width: "100%",
       display: "grid" as const,
       gridTemplateColumns: "1fr 1fr",
-      gap: "60px",
+      gap: "40px",
       alignItems: "center" as const,
     },
     heroText: {
@@ -183,10 +234,8 @@ const Home: React.FC = () => {
       color: "#bee3f8",
       margin: 0,
     },
-
-    // FEATURES - DROPDOWN
     features: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#ffffff",
     },
     featuresContainer: {
@@ -206,7 +255,7 @@ const Home: React.FC = () => {
       fontSize: "17px",
       color: "#4a5568",
       maxWidth: "700px",
-      margin: "0 auto 48px auto",
+      margin: "0 auto 40px auto",
       lineHeight: "1.6",
     },
     dropdownContainer: {
@@ -271,10 +320,8 @@ const Home: React.FC = () => {
       borderBottom: "none",
       lineHeight: "1.6",
     },
-
-    // WHO CAN USE
     whoCanUse: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#f7fafc",
     },
     whoCanUseContainer: {
@@ -284,12 +331,12 @@ const Home: React.FC = () => {
     whoCanUseGrid: {
       display: "grid" as const,
       gridTemplateColumns: "repeat(3, 1fr)",
-      gap: "32px",
+      gap: "24px",
       marginTop: "40px",
     },
     whoCanUseCard: {
       backgroundColor: "#ffffff",
-      padding: "28px 24px",
+      padding: "24px 20px",
       borderRadius: "8px",
       border: "1px solid #e2e8f0",
     },
@@ -318,10 +365,8 @@ const Home: React.FC = () => {
       borderBottom: "none",
       lineHeight: "1.6",
     },
-
-    // CUSTOMIZATION
     customization: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#ffffff",
     },
     customizationContainer: {
@@ -332,12 +377,12 @@ const Home: React.FC = () => {
     customizationGrid: {
       display: "grid" as const,
       gridTemplateColumns: "1fr 1fr",
-      gap: "32px",
+      gap: "24px",
       marginTop: "40px",
     },
     customizationCard: {
       backgroundColor: "#f7fafc",
-      padding: "28px 24px",
+      padding: "24px 20px",
       borderRadius: "8px",
       textAlign: "left" as const,
     },
@@ -353,10 +398,8 @@ const Home: React.FC = () => {
       lineHeight: "1.6",
       margin: 0,
     },
-
-    // ABOUT
     about: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#f7fafc",
     },
     aboutContainer: {
@@ -369,10 +412,8 @@ const Home: React.FC = () => {
       color: "#2d3748",
       marginBottom: "20px",
     },
-
-    // STEPS
     steps: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#ffffff",
     },
     stepsContainer: {
@@ -382,7 +423,7 @@ const Home: React.FC = () => {
     stepsGrid: {
       display: "grid" as const,
       gridTemplateColumns: "repeat(3, 1fr)",
-      gap: "40px",
+      gap: "32px",
     },
     step: {
       textAlign: "center" as const,
@@ -413,10 +454,8 @@ const Home: React.FC = () => {
       lineHeight: "1.6",
       margin: 0,
     },
-
-    // CTA
     cta: {
-      padding: "80px 40px",
+      padding: "60px 24px",
       backgroundColor: "#2b6cb0",
       color: "#ffffff",
       textAlign: "center" as const,
@@ -448,10 +487,8 @@ const Home: React.FC = () => {
       cursor: "pointer",
       transition: "all 0.2s",
     },
-
-    // CONTACT - FREE DEMO
     contactSection: {
-      padding: "40px 40px 60px 40px",
+      padding: "40px 24px 60px 24px",
       backgroundColor: "#2b6cb0",
       color: "#ffffff",
       textAlign: "center" as const,
@@ -485,12 +522,10 @@ const Home: React.FC = () => {
       marginTop: "14px",
       marginBottom: 0,
     },
-
-    // FOOTER
     footer: {
       backgroundColor: "#1a202c",
       color: "#a0aec0",
-      padding: "40px 40px 20px",
+      padding: "40px 24px 20px",
     },
     footerContainer: {
       maxWidth: "1200px",
@@ -561,40 +596,105 @@ const Home: React.FC = () => {
     footer
   } = homeData;
 
+  // ===== RESPONSIVE CSS (scoped to this page only) =====
+  const responsiveCSS = `
+    @media (max-width: 1024px) {
+      .home-hero-grid { grid-template-columns: 1fr !important; text-align: center; }
+      .home-hero-desc { margin: 0 auto 40px auto; }
+      .home-hero-btns { justify-content: center; }
+      .home-hero-visual { max-width: 500px; margin: 0 auto; }
+      .home-features-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .home-who-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    }
+    @media (max-width: 768px) {
+      .home-desktop-nav { display: none !important; }
+      .home-hamburger { display: flex !important; }
+      .home-mobile-menu { display: none; }
+      .home-mobile-menu.open { display: flex !important; }
+      .home-hero-title { font-size: 2.5rem !important; }
+      .home-hero-visual { grid-template-columns: 1fr !important; gap: 16px; }
+      .home-features-grid { grid-template-columns: 1fr !important; gap: 24px; }
+      .home-who-grid { grid-template-columns: 1fr !important; gap: 24px; }
+      .home-custom-grid { grid-template-columns: 1fr !important; gap: 24px; }
+      .home-steps-grid { grid-template-columns: 1fr !important; gap: 32px; }
+      .home-footer-wrap { flex-direction: column !important; text-align: center; }
+      .home-footer-links { flex-wrap: wrap; justify-content: center; }
+      .home-section-title { font-size: 2rem !important; }
+    }
+    @media (min-width: 769px) {
+      .home-hamburger { display: none !important; }
+      .home-mobile-menu { display: none !important; }
+    }
+    @media (max-width: 480px) {
+      .home-hero-title { font-size: 2rem !important; }
+      .home-hero-btns { flex-direction: column !important; align-items: center; }
+      .home-hero-btns button { width: 100% !important; text-align: center; justify-content: center; }
+    }
+  `;
+
   return (
     <div style={styles.homeContainer}>
+      <style>{responsiveCSS}</style>
+
       {/* NAVBAR */}
       <nav style={styles.navbar}>
         <div style={styles.logo} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
           {navbar.logo}
         </div>
-        <ul style={styles.navLinks}>
-          {navbar.links.map((link: string) => (
-            <li key={link}>
-              <a
-                style={styles.navLink}
-                onClick={() => scrollToSection(link.toLowerCase().replace(/ /g, "-"))}
-              >
-                {link}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <button style={styles.btnLogin} onClick={() => navigate("/login")}>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "32px" }}>
+          {/* Desktop Nav */}
+          <ul style={styles.navLinks} className="home-desktop-nav">
+            {navbar.links.map((link: string) => (
+              <li key={link}>
+                <a
+                  style={styles.navLink}
+                  onClick={() => scrollToSection(link.toLowerCase().replace(/ /g, "-"))}
+                >
+                  {link}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <button style={styles.btnLogin} className="home-desktop-nav" onClick={() => navigate("/login")}>
+            Login
+          </button>
+
+          {/* Hamburger */}
+          <button style={styles.hamburger} className="home-hamburger" onClick={toggleMenu}>
+            <span style={styles.hamburgerLine}></span>
+            <span style={styles.hamburgerLine}></span>
+            <span style={styles.hamburgerLine}></span>
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      <div style={{ ...styles.mobileMenu, ...(isMenuOpen ? styles.mobileMenuOpen : {}) }} className={`home-mobile-menu ${isMenuOpen ? 'open' : ''}`}>
+        {navbar.links.map((link: string) => (
+          <a
+            key={link}
+            style={styles.mobileLink}
+            onClick={() => scrollToSection(link.toLowerCase().replace(/ /g, "-"))}
+          >
+            {link}
+          </a>
+        ))}
+        <button style={styles.mobileLogin} onClick={() => { navigate("/login"); setIsMenuOpen(false); }}>
           Login
         </button>
-      </nav>
+      </div>
 
       {/* HERO */}
       <section style={styles.hero}>
-        <div style={styles.heroContent}>
+        <div style={{ ...styles.heroContent }} className="home-hero-grid">
           <div style={styles.heroText}>
-            <h1 style={styles.heroTitle}>
+            <h1 style={styles.heroTitle} className="home-hero-title">
               {hero.title} <br />
               <span style={styles.heroHighlight}>{hero.highlight}</span>
             </h1>
-            <p style={styles.heroDescription}>{hero.description}</p>
-            <div style={styles.heroButtons}>
+            <p style={styles.heroDescription} className="home-hero-desc">{hero.description}</p>
+            <div style={styles.heroButtons} className="home-hero-btns">
               <button style={styles.btnPrimary} onClick={() => navigate("/login")}>
                 {hero.buttons.primary}
               </button>
@@ -603,7 +703,7 @@ const Home: React.FC = () => {
               </button>
             </div>
           </div>
-          <div style={styles.heroVisual}>
+          <div style={styles.heroVisual} className="home-hero-visual">
             {heroCards.map((card: any, index: number) => (
               <div
                 key={index}
@@ -624,7 +724,7 @@ const Home: React.FC = () => {
       {/* FEATURES - DROPDOWN */}
       <section id="features" style={styles.features}>
         <div style={styles.featuresContainer}>
-          <h2 style={styles.sectionTitle}>{features.title}</h2>
+          <h2 style={styles.sectionTitle} className="home-section-title">{features.title}</h2>
           <p style={styles.sectionSubtitle}>{features.subtitle}</p>
           <div style={styles.dropdownContainer}>
             {features.items.map((item: any) => (
@@ -667,9 +767,9 @@ const Home: React.FC = () => {
       {/* WHO CAN USE */}
       <section id="who-can-use" style={styles.whoCanUse}>
         <div style={styles.whoCanUseContainer}>
-          <h2 style={styles.sectionTitle}>{whoCanUse.title}</h2>
+          <h2 style={styles.sectionTitle} className="home-section-title">{whoCanUse.title}</h2>
           <p style={styles.sectionSubtitle}>{whoCanUse.subtitle}</p>
-          <div style={styles.whoCanUseGrid}>
+          <div style={styles.whoCanUseGrid} className="home-who-grid">
             {whoCanUse.cards.map((card: any, index: number) => (
               <div key={index} style={styles.whoCanUseCard}>
                 <h3 style={styles.whoCanUseCardTitle}>{card.title}</h3>
@@ -692,9 +792,9 @@ const Home: React.FC = () => {
       {/* CUSTOMIZATION */}
       <section id="customize" style={styles.customization}>
         <div style={styles.customizationContainer}>
-          <h2 style={styles.sectionTitle}>{customization.title}</h2>
+          <h2 style={styles.sectionTitle} className="home-section-title">{customization.title}</h2>
           <p style={styles.sectionSubtitle}>{customization.subtitle}</p>
-          <div style={styles.customizationGrid}>
+          <div style={styles.customizationGrid} className="home-custom-grid">
             {customization.cards.map((card: any, index: number) => (
               <div key={index} style={styles.customizationCard}>
                 <h3 style={styles.customizationCardTitle}>{card.title}</h3>
@@ -708,7 +808,7 @@ const Home: React.FC = () => {
       {/* ABOUT */}
       <section id="about" style={styles.about}>
         <div style={styles.aboutContainer}>
-          <h2 style={styles.sectionTitle}>{about.title}</h2>
+          <h2 style={styles.sectionTitle} className="home-section-title">{about.title}</h2>
           {about.paragraphs.map((paragraph: string, index: number) => (
             <p
               key={index}
@@ -722,9 +822,9 @@ const Home: React.FC = () => {
       {/* STEPS */}
       <section style={styles.steps}>
         <div style={styles.stepsContainer}>
-          <h2 style={styles.sectionTitle}>{steps.title}</h2>
+          <h2 style={styles.sectionTitle} className="home-section-title">{steps.title}</h2>
           <p style={styles.sectionSubtitle}>{steps.subtitle}</p>
-          <div style={styles.stepsGrid}>
+          <div style={styles.stepsGrid} className="home-steps-grid">
             {steps.items.map((item: any) => (
               <div key={item.number} style={styles.step}>
                 <div style={styles.stepNumber}>{item.number}</div>
@@ -766,12 +866,12 @@ const Home: React.FC = () => {
       {/* FOOTER */}
       <footer style={styles.footer}>
         <div style={styles.footerContainer}>
-          <div style={styles.footerContent}>
+          <div style={styles.footerContent} className="home-footer-wrap">
             <div style={styles.footerBrand}>
               <span style={styles.footerBrandTitle}>{footer.brand}</span>
               <p style={styles.footerBrandSub}>{footer.sub}</p>
             </div>
-            <ul style={styles.footerLinks}>
+            <ul style={styles.footerLinks} className="home-footer-links">
               {footer.links.map((link: string) => (
                 <li key={link}>
                   {link === "Login" ? (

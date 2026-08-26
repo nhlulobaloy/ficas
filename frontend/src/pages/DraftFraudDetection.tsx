@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/PreliminaryInvestigation.css";
+import "../../styles/PreliminaryInvestigation.css";
 import{ apiBackend, apiCall } from '../api/api.ts';
 
 interface Category {

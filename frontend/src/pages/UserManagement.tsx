@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "../styles/UserManagement.css";
+import "../../styles/UserManagement.css";
 import axios from "axios";
 import { apiBackend, apiCall } from '../api/api.ts';
 

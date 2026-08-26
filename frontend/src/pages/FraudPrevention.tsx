@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Preliminary.css";
-import "../styles/ReviewIncident.css";
+import "../../styles/Preliminary.css";
+import "../../styles/ReviewIncident.css";
 import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Comment {

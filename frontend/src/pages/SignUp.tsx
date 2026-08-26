@@ -1,5 +1,5 @@
 import { useState } from "react";
-import '../styles/Auth.css'
+import '../../styles/Auth.css'
 import{ apiBackend }from '../api/api.ts';
 
 export default function SignUp() {
