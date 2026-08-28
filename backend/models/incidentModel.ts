@@ -1,5 +1,8 @@
 import { OkPacket, OkPacketParams, QueryResult, RowDataPacket } from 'mysql2';
 import pool from '../config/db.js';
+import { verify } from 'node:crypto';
+import { verifyAccessAssign } from '../controllers/IncidentController.js';
+import { ReadOptionsWithBuffer } from 'node:fs';
 
 
 interface IncidentData {
@@ -84,4 +87,67 @@ export const getInvestigators = async (): Promise<Investigator[]> => {
     `;
     const [rows] = await pool.query<RowDataPacket[]>(sql);
     return rows as Investigator[];
+}
+
+// verify if this user has the access to assign a case
+export const verifyAccess = async (userIdFromToken: number): Promise<RowDataPacket[]> => {
+    const sql = `
+      SELECT a.user_id, a.assign_incident, u.role
+      FROM access_rights a
+      INNER JOIN users u ON a.user_id = u.id
+      WHERE u.id = ?;
+    `;
+    const [result] = await pool.query<RowDataPacket[]>(sql, [userIdFromToken]);
+
+    return result;
+}
+
+// verify if the user has authorization to create a case
+export const verifyInsert = async (userIdFromToken: number): Promise<RowDataPacket[]> => {
+    const sql = `
+      SELECT a.user_id, a.create_incident, u.role
+      FROM access_rights a
+      INNER JOIN users u ON a.user_id = u.id
+      WHERE u.id = ?;
+    `;
+    const [result] = await pool.query<RowDataPacket[]>(sql, [userIdFromToken]);
+
+    return result;
+}
+
+
+// get incidents assigned to this user
+
+export const getAssignedIncidents = async (tokenId: number) => {
+    const sql = `SELECT i.*,
+       u.name,
+       u.email
+       FROM incidents i 
+       LEFT JOIN users u ON i.assigned_to = u.id
+       WHERE u.id = ? 
+       ORDER BY u.id`;
+    const [result] = await pool.query(sql, [tokenId]);
+
+    return result;
+}
+
+// get incidents assigned to a preliminary 
+export const getAssignedToPreliminary = async (limit: number, offset: number): Promise<RowDataPacket[]> => {
+        const sql = `
+      SELECT 
+        i.*,
+        c.name as category_name,
+        CONCAT(u.name, ' (', u.email, ')') as assigned_investigator_name,
+        u.email as assigned_investigator_email,
+        d.name as referred_department_name
+      FROM incidents i
+      LEFT JOIN categories c ON i.category = c.id
+      LEFT JOIN users u ON i.assigned_to = u.id
+      LEFT JOIN preli_departments d ON i.referred_department = d.id
+      ORDER BY i.created_at ASC
+      LIMIT ? OFFSET ?
+    `;
+
+    const [rows] = await pool.query<RowDataPacket[]>(sql, [limit, offset]);
+    return rows;
 }
