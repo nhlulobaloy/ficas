@@ -6,3 +6,6 @@ build
 *.log
 .DS_Store
 forensic_admin.sql
+dist
+.vite
+README.md

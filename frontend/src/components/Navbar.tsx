@@ -69,7 +69,10 @@ const NavBar: React.FC = () => {
     { name: "Option 4", path: "/AdminView/option4" },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const { data } = await axios.delete(`http://localhost:3000/api/auth/logout`);
+    const response = data;
+    console.log(response);
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("name");

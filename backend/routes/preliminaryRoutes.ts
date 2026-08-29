@@ -1,9 +1,7 @@
 import express from 'express';
-import { 
-  createPreli, 
+import {  
   getPreli, 
   updatePreli, 
-  getPrelis,
   getPreliminaries, 
   getForensicInvestigators,
   returnPreliminary,

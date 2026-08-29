@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    setLoading(true);
     try {
       const userData = { email, password };
       const res = await fetch(`http://localhost:3000/api/auth/login`, {
@@ -16,10 +23,16 @@ export default function Login() {
         },
         body: JSON.stringify(userData),
       });
+
       const data = await res.json();
-      const token = data.token;
+
+      if (!res.ok) {
+        alert("Error: " + data.message);
+        return;
+      }
+
       if (data.message === "successful") {
-        localStorage.setItem("token", token);
+        localStorage.setItem("token", data.token);
         navigate("/Forensic");
       } else {
         alert("Error occurred: " + data.message);
@@ -27,6 +40,9 @@ export default function Login() {
       }
     } catch (error) {
       console.error(`Error: ${error}`);
+      alert("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -46,12 +62,17 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           value={password}
         />
-        <button className="login-btn" onClick={handleSubmit}>
-          Login
+        <button className="login-btn" onClick={handleSubmit} disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
         </button>
         <span className="login-note">
           Enter your credentials to access the dashboard
         </span>
+        <div className="login-footer">
+          <Link to="/" className="back-home-link">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
-import dotenv from 'dotenv';
-dotenv.config(); // call and declare the dotenv file
+import 'dotenv/config';
+//dotenv.config(); // call and declare the dotenv file
 
 // import express and declare the cors
 import express from 'express';
+
 import cors from 'cors';
 
 import incidentRoutes from './routes/incidentRoutes.js';
@@ -17,12 +18,11 @@ import fraudDetectionRoutes from './routes/fraudDetectionRoutes.js';
 import userManagement from './routes/userManagementRoutes.js';
 import pool from './config/db.js';
 
-const app = express();
+const app   = express();
 app.use(express.json());
-app.use(cors({ origin: 'http://localhost:5173' })) // only allow this domAIn to send requests to this server
+app.use(cors({ origin: 'http://localhost:5173' })) // only allow this domain to send requests to this server
 
 // test the db connection
-
 try {
     (async () => {
         await pool.getConnection();

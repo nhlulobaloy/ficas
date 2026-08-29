@@ -20,13 +20,14 @@ import FraudDetection from "./FraudDetection";
 import UserManagement from "./UserManagement";
 import UpdateProfile from "./UpdateProfile";
 import ReviewFraudDetection from "./ReviewFraudDetection";
+import Home from "./Home";
 
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Home />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         {/* Protected Routes with Layout */}
