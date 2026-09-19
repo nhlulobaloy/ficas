@@ -3,6 +3,3 @@ dist
 .vite
 .git
 .env
-*.log
-.DS_Store
-README.md
