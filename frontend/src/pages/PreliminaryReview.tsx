@@ -1,7 +1,8 @@
 /* PreliminaryReview.tsx */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/PreliminaryReview.css";
+import "../../styles/PreliminaryReview.css";
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface PreliminaryComment {
   id: number;
@@ -85,9 +86,7 @@ export default function PreliminaryReview() {
   // ✅ Verify access first
   const verifyAccess = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/preliminary/auth/access", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiCall(`${apiBackend}/preliminary/auth/access`);
 
       if (res.status === 401) {
         navigate("/login");
@@ -111,9 +110,7 @@ export default function PreliminaryReview() {
       const allowed = await verifyAccess();
       if (!allowed) return;
 
-      const res = await fetch(`http://localhost:3000/api/preliminary?page=${currentPage}&limit=${itemsPerPage}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiCall(`${apiBackend}/preliminary?page=${currentPage}&limit=${itemsPerPage}`);
       const data = await res.json();
       setInvestigations(data.data || []);
       setFilteredInvestigations(data.data || []);
@@ -129,13 +126,9 @@ export default function PreliminaryReview() {
   const fetchInvestigatorAndDepartments = async () => {
     try {
       const [invRes, depRes] = await Promise.all([
-        fetch("http://localhost:3000/api/preliminary/investigators", {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
+        apiCall(`${apiBackend}/preliminary/investigators`),
         // Changed to match first file's endpoint
-        fetch("http://localhost:3000/api/preli/departments", {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        apiCall(`${apiBackend}/preli/departments`)
       ]);
 
       if (!invRes.ok) {
@@ -147,7 +140,6 @@ export default function PreliminaryReview() {
 
       const investigatorsData = await invRes.json();
       const departmentsData = await depRes.json();
-
 
       // Handle different response formats
       setInvestigators(investigatorsData.data || investigatorsData || []);
@@ -206,12 +198,8 @@ export default function PreliminaryReview() {
       //const userName = localStorage.getItem("name") || "User";
       const selectedInv = investigators.find(inv => inv.id === parseInt(selectedInvestigator));
 
-      const res = await fetch(`http://localhost:3000/api/preliminary/assign/${id}`, {
+      const res = await apiCall(`${apiBackend}/preliminary/assign/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           assigned_to: parseInt(selectedInvestigator),
           assigned_investigator_name: selectedInv ? `${selectedInv.name} (${selectedInv.email})` : '',
@@ -250,12 +238,8 @@ export default function PreliminaryReview() {
   const handleCloseCase = async (id: number) => {
     try {
       const userName = localStorage.getItem("name") || "User";
-      const res = await fetch(`http://localhost:3000/api/preliminary/close/${id}`, {
+      const res = await apiCall(`${apiBackend}/preliminary/close/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           status: "closed",
           recommendations: "close",
@@ -297,12 +281,8 @@ export default function PreliminaryReview() {
 
     try {
       const selectedDept = departments.find(dept => dept.id === parseInt(selectedDepartment));
-      const res = await fetch(`http://localhost:3000/api/preliminary/refer/${id}`, {
+      const res = await apiCall(`${apiBackend}/preliminary/refer/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           referred_department: selectedDept?.name || selectedDepartment,
           status: "approved",
@@ -348,12 +328,8 @@ export default function PreliminaryReview() {
         status: "returned"
       };
 
-      const res = await fetch(`http://localhost:3000/api/preliminary/return/${selectedInvestigation.id}`, {
+      const res = await apiCall(`${apiBackend}/preliminary/return/${selectedInvestigation.id}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(returnData),
       });
 
@@ -439,9 +415,7 @@ export default function PreliminaryReview() {
 
   const handleView = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/preliminary/review/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiCall(`${apiBackend}/preliminary/review/${id}`);
       const data = await res.json();
       if (res.ok) {
         setSelectedInvestigation(data.data);

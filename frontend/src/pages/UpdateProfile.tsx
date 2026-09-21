@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import{ apiBackend,apiCall }from '../api/api.ts';
 
 interface User {
   id: number;
@@ -13,27 +13,22 @@ interface User {
 export default function UpdateProfile() {
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState<User>();
-  const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
 
 //get the user data
   const getUser = async () => {
-    const res = await axios.get(`http://localhost:3000/api/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    setUserData(res.data.data);
+    const res = await apiCall(`${apiBackend}/profile`);
+    const data = await res.json();
+    setUserData(data);
   };
 //send the request to the backend
   const updateUser = async () => {
     const data = {name, email}
-   const res = await axios.post(`http://localhost:3000/api/profile/update`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+   const res = await apiCall(`${apiBackend}/profile/update`, {
+    method: 'POST',
+    body: JSON.stringify(data)
    })
   await getUser();
   }

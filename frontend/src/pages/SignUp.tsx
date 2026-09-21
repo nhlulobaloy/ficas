@@ -1,5 +1,6 @@
 import { useState } from "react";
-import '../styles/Auth.css'
+import '../../styles/Auth.css'
+import{ apiBackend }from '../api/api.ts';
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -8,7 +9,7 @@ export default function SignUp() {
 
   const handleSubmit = async () => {
     const userData = {name, email, password}
-    const res = await fetch(`http://localhost:3000/api/auth/signup`, {
+    const res = await fetch(`${apiBackend}/api/auth/signup`, {
         method: 'POST',
         headers: {
             'Content-Type' : 'application/json'

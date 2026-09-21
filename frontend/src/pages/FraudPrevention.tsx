@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Preliminary.css";
-import "../styles/ReviewIncident.css";
+import "../../styles/Preliminary.css";
+import "../../styles/ReviewIncident.css";
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Comment {
   id: number;
@@ -58,9 +59,7 @@ export default function Fraudprevention() {
   useEffect(() => {
     const fetchInvestigations = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/fraud/prevention?page=${currentPage}&limit=${limit}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await apiCall(`${apiBackend}/fraud/prevention?page=${currentPage}&limit=${limit}`);
         if (!res.ok) throw new Error("Fetch failed");
         const json = await res.json();
         setData(json.results || []);

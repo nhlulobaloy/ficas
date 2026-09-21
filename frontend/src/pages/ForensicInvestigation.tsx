@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/PreliminaryInvestigation.css";
+import "../../styles/PreliminaryInvestigation.css";
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Category {
   id: number;
@@ -80,17 +81,14 @@ export default function ForensicInvestigation() {
   const updateForm = (field: any, value: any) =>
     setFormData((prev) => ({ ...prev, [field]: value || "" }));
 
-  // FETCH DATA
+  // apiCall DATA
   useEffect(() => {
-    const fetchData = async () => {
+    const apiCallData = async () => {
       setLoading(true);
 
       try {
         // Incident details
-        const incidentRes = await fetch(
-          `http://localhost:3000/api/incidents/get-incident/${incident_id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const incidentRes = await apiCall(`${apiBackend}/incidents/get-incident/${incident_id}`);
         if (incidentRes.ok) {
           const incidentData = await incidentRes.json();
           setIncidentDetails(incidentData.data);
@@ -98,18 +96,14 @@ export default function ForensicInvestigation() {
 
         // Categories and departments
         const [catRes, deptRes] = await Promise.all([
-          fetch("http://localhost:3000/api/preli/categories"),
-          fetch("http://localhost:3000/api/preli/departments"),
+          apiCall(`${apiBackend}/preli/categories`),
+          apiCall(`${apiBackend}/preli/departments`),
         ]);
         setPreliCategories(await catRes.json());
         setPreliDepartments(await deptRes.json());
 
         // Preliminary investigation data
-        const preliRes = await fetch(
-          `http://localhost:3000/api/preliminary/get-Preli/${incident_id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-
+        const preliRes = await apiCall(`${apiBackend}/preliminary/get-Preli/${incident_id}`);
         if (preliRes.ok) {
           const preliData = await preliRes.json();
           if (preliData.data) {
@@ -146,28 +140,28 @@ export default function ForensicInvestigation() {
           }
         }
       } catch (error) {
-        console.error("Fetch error:", error);
+        console.error("apiCall error:", error);
         setSessionMessage("Error loading data");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    apiCallData();
   }, [incident_id, token, userName]);
 
-  // Fetch subcategories when category changes
+  // apiCall subcategories when category changes
   useEffect(() => {
-    const fetchSubcategories = async () => {
+    const apiCallSubcategories = async () => {
       if (!formData.case_category) return setPreliSubcategories([]);
-      const res = await fetch(
-        `http://localhost:3000/api/preli/subcategories?category=${formData.case_category}`,
+      const res = await apiCall(
+        `${apiBackend}/preli/subcategories?category=${formData.case_category}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
       const data = await res.json();
       setPreliSubcategories(data || []);
     };
-    fetchSubcategories();
+    apiCallSubcategories();
   }, [formData.case_category, token]);
 
   const handleAction = (type: "save" | "submit") => {
@@ -187,15 +181,11 @@ export default function ForensicInvestigation() {
 
       const method = formData.id ? "PUT" : "POST";
       const url = formData.id
-        ? `http://localhost:3000/api/preliminary/update-Preli/${incident_id}`
-        : `http://localhost:3000/api/preliminary/create-Preli`;
+        ? `${apiBackend}/preliminary/update-Preli/${incident_id}`
+        : `${apiBackend}/preliminary/create-Preli`;
 
-      const res = await fetch(url, {
+      const res = await apiCall(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(dataToSend),
       });
 

@@ -1,7 +1,8 @@
 /* ForensicReview.tsx */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/PreliminaryReview.css";
+import "../../styles/PreliminaryReview.css";
+import{ apiBackend, apiCall } from '../api/api.ts';
 
 interface ForensicComment {
   id: number;
@@ -76,12 +77,7 @@ export default function ReviewForensic() {
 
   const verifyAccess = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:3000/api/forensic/auth/access",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const res = await apiCall(`${apiBackend}/forensic/auth/access`);
       if (res.status === 401) {
         navigate("/login");
         return false;
@@ -100,12 +96,7 @@ export default function ReviewForensic() {
 
   const fetchInvestigators = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:3000/api/forensic/case/investigators",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const res = await apiCall(`${apiBackend}/forensic/case/investgators`);
       const data = await res.json();
       setInvestigators(data.data || data || []);
     } catch (err) {
@@ -119,12 +110,7 @@ export default function ReviewForensic() {
       const allowed = await verifyAccess();
       if (!allowed) return;
 
-      const res = await fetch(
-        `http://localhost:3000/api/forensic/case/review?page=${currentPage}&limit=${itemsPerPage}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const res = await apiCall(`${apiBackend}/forensic/case/reviewpage=$currentPage}&limit=${itemsPerPage}`);
       const data = await res.json();
       setInvestigations(data.data || []);
       setFilteredInvestigations(data.data || []);//pagination
@@ -138,12 +124,7 @@ export default function ReviewForensic() {
 
   const fetchDepartments = async () => {
     try {
-      const depRes = await fetch(
-        "http://localhost:3000/api/preli/departments",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const depRes = await apiCall(`${apiBackend}/preli/departments`);
       const departmentsData = await depRes.json();
       setDepartments(departmentsData.data || departmentsData || []);
     } catch (err) {
@@ -184,12 +165,8 @@ export default function ReviewForensic() {
   const handleCloseCase = async (id: number) => {
     const userName = localStorage.getItem("name") || "User";
     try {
-      const res = await fetch(`http://localhost:3000/api/forensic/close/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await apiCall(`${apiBackend}/forensic/close/${id}`, {
+       method: "PUT",
         body: JSON.stringify({ status: "closed", conducted_by: userName }),
       });
       if (res.ok) {
@@ -221,12 +198,8 @@ export default function ReviewForensic() {
       const selectedDept = departments.find(
         (dept) => dept.id === parseInt(selectedDepartment),
       );
-      const res = await fetch(`http://localhost:3000/api/forensic/refer/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+      const res = await apiCall(`${apiBackend}/forensic/refer/${id}`, {
+       method: "PUT",
         body: JSON.stringify({
           referred_department: selectedDept?.id || selectedDepartment,
           status: "approved",
@@ -277,14 +250,9 @@ export default function ReviewForensic() {
         status: "review",
       });
 
-      const res = await fetch(
-        `http://localhost:3000/api/forensic/case/assign/${investigationId}`,
+      const res = await apiCall(`${apiBackend}api/forensic/case/assign${investigationId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             assigned_to: selectedInv.id,
             assigned_investigator_name: selectedInv.name,
@@ -331,14 +299,9 @@ export default function ReviewForensic() {
       return;
     }
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/forensic/return/${selectedInvestigation.id}`,
+      const res = await apiCall(`${apiBackend}api/forensic/return/${selectedInvestigation.id}`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             comments: returnComments,
             status: "returned",
@@ -397,8 +360,8 @@ export default function ReviewForensic() {
 
   const handleView = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/forensic/review/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${apiBackend}api/forensic/review/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok) {
@@ -431,7 +394,7 @@ export default function ReviewForensic() {
     }
   };
 
-  // =================== RENDER JSX ===================
+  // RENDER JSX
   if (loading) return <div className="loading">Loading...</div>;
   if (!investigations.length)
     return <div className="no-data">No forensic investigations found</div>;

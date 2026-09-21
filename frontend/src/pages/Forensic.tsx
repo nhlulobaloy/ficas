@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import "../styles/Preliminary.css";
-import "../styles/ReviewIncident.css";
+import "../../styles/Preliminary.css";
+import "../../styles/ReviewIncident.css";
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Comment {
   id: number;
@@ -64,10 +65,7 @@ export default function Forensic() {
   useEffect(() => {
     const fetchInvestigations = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/forensic?limit=${limit}&page=${currentPage}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await apiCall(`${apiBackend}/forensic?limit=${limit}&page=${currentPage}`);
         if (!res.ok) throw new Error("Fetch failed");
         const json = await res.json();
         setData(json.data || []);

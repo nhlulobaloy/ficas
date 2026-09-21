@@ -4,13 +4,14 @@ import jwt from "jsonwebtoken";
 import validator from "validator";
 import { NextFunction, Request, Response } from "express";
 import { RowDataPacket } from "mysql2";
+import { checkUserExists, createUser, findByEmail } from "../models/userModel.js";
+
 
 export const SignUp = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
-    /* -------------------- Input Validation -------------------- */
-
+    // Input Validation
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
@@ -39,30 +40,19 @@ export const SignUp = async (req: Request, res: Response) => {
       });
     }
 
-    /* -------------------- Check Existing User -------------------- */
-
-    const [existingUser] = await pool.query(
-      "SELECT id FROM users WHERE email = ? LIMIT 1",
-      [email]
-    ) as any;
-
-    if (existingUser.length > 0) {
+    // Check Existing User
+    const user = await checkUserExists(email);
+    if (user) {
       return res.status(409).json({
         success: false,
         message: "Email already registered."
       });
     }
 
-    /* -------------------- Hash Password -------------------- */
-
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    /* -------------------- Insert User -------------------- */
-
-    await pool.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name.trim(), email.toLowerCase(), hashedPassword]
-    );
+    // Insert User into the db
+    const newUser = await createUser({ name, email, password });
+    // check if the user is return
+    if (!newUser) return res.status(500).json({ message: 'Internal server error' })
 
     return res.status(201).json({
       success: true,
@@ -71,13 +61,13 @@ export const SignUp = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error("SignUp Error:", error);
-
     return res.status(500).json({
       success: false,
       message: "Internal server error."
     });
   }
 };
+
 // refresh token
 export const refreshToken = async (req: Request, res: Response) => {
   try {
@@ -86,26 +76,31 @@ export const refreshToken = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Refresh token required" });
     }
     const refreshKey = process.env.REFRESH_SECRET
-    // Verify refresh token
+    // Verify refresh token and generate a new one at the same time
     const tokenData = await generateToken(refreshToken, refreshKey!, 15)
 
-    // Check if exists in DB
+    // Check if the refresh token exists in the DB
     const [rows] = await pool.query<RowDataPacket[]>(
       "SELECT * FROM refresh_tokens WHERE refreshToken = ? AND user_id = ?",
       [refreshToken, tokenData.id]
     );
 
-    if (rows.length === 0) {
-      return res.status(403).json({ message: "Invalid refresh token" });
-    }
+    if (rows.length === 0) return res.status(403).json({ message: "Invalid refresh token" });
 
+    // return the new token if all the check are passed
     res.json({ token: tokenData.token });
   } catch (error) {
     res.status(403).json({ message: "Invalid refresh token" });
   }
 };
 
-// generate token using one function to avoid repeating same code many times
+/**
+ * Verifies refresh token and generates a new access token
+ * @param token - Refresh token stored in HTTP-only cookie
+ * @param secretKey - Secret key for JWT verification and signing
+ * @param expireTime - Expiration time in minutes
+ * @returns New access token + decoded user data (id, name, email, role)
+ */
 const generateToken = async (token: string, secretKey: string, expireTime: number) => {
 
   const decoded = jwt.verify(token, secretKey!) as any
@@ -122,12 +117,11 @@ const generateToken = async (token: string, secretKey: string, expireTime: numbe
 export const Login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    const sql = `SELECT * FROM users WHERE email = ?`;
-    const [result] = await pool.query<RowDataPacket[]>(sql, [email]);
-    if (result.length === 0)
+    const findUserByEmail = await findByEmail(email) 
+    if (findUserByEmail.length === 0)
       return res.status(401).json({ message: "Invalid credentials" });
 
-    const user = result[0];
+    const user = findUserByEmail[0];
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(401).json({ message: "Invalid credentials" });
@@ -143,17 +137,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
       process.env.REFRESH_SECRET!,  // Different secret
       { expiresIn: "7d" }  // 7 days
     );
-    // create a new refresh token table
-    /**
-    CREATE TABLE refresh_tokens (
-      id INT PRIMARY KEY AUTO_INCREMENT,
-      user_id INT NOT NULL,
-      refreshToken VARCHAR(255) NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user_id) REFERENCES users(id)
-    );
-     */
-    // store the refresh token in the db
+
     await pool.query(
       "INSERT INTO refresh_tokens (user_id, refreshToken) VALUES (?, ?)",
       [user.id, refreshToken]
@@ -205,7 +189,7 @@ export const logout = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     // check if token exists
-    if(!user) return res.status(401).json({ "message": "invalid token"})
+    if (!user) return res.status(401).json({ "message": "invalid token" })
     // delete the user refresh token from the database using the user id
     const [result] = await pool.execute('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id])
     // clear the cookie in the browser

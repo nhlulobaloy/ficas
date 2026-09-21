@@ -1,36 +1,39 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import "../styles/PreliminaryInvestigation.css";
+import "../../styles/PreliminaryInvestigation.css";
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 interface Category {
   id: number;
   name: string;
 }
 
-// Interface matching fraud_detection table fields
-interface FraudDetectionData {
+// Interface matching table fields
+interface FraudPreventionData {
   id?: number;
-  fraud_prevention_id?: number;
-  background: string;
-  findings: string;
-  conclusion: string;
-  abbreviations_terms_definitions: string;
+  executive_summary: string;
+  abbreviations: string;
   annexures: string;
+  individuals_featured: string;
   mandate: string;
-  review_objective: string;
-  approach_and_procedures_performed: string;
+  purpose_and_objective: string;
+  scope_of_investigation: string;
   restrictions_and_limitations: string;
-  data_analyst_methodology: string;
-  applicable_legislation_policies: string;
-  observations: string;
-  recommendations: string;
+  legislative_policy_framework: string;
+  review_methodology: string;
+  tone_at_the_top: string;
+  review_details: string;
+  sequence_of_events: string;
+  findings: string;
+  conclusions: string;
+  recommendations: "pending" | "close" | "full_investigation" | "refer" | "";
   general: string;
-  status: "draft" | "review" | "approved" | "returned" | "";
+  fraud_prevention: string;
+  status: "draft" | "review" | "approved" | "";
   conducted_by: string;
+  reviewed_by: string;
+  approved_by: string;
   referred_department: string;
-  assigned_to?: number;
-  created_at?: string;
-  updated_at?: string;
 }
 
 export default function DraftFraudDetection() {
@@ -49,22 +52,28 @@ export default function DraftFraudDetection() {
   const token = localStorage.getItem("token");
   const userName = localStorage.getItem("name") || "";
 
-  const [formData, setFormData] = useState<FraudDetectionData>({
-    background: "",
-    findings: "",
-    conclusion: "",
-    abbreviations_terms_definitions: "",
+  const [formData, setFormData] = useState<FraudPreventionData>({
+    executive_summary: "",
+    abbreviations: "",
     annexures: "",
+    individuals_featured: "",
     mandate: "",
-    review_objective: "",
-    approach_and_procedures_performed: "",
+    purpose_and_objective: "",
+    scope_of_investigation: "",
     restrictions_and_limitations: "",
-    data_analyst_methodology: "",
-    applicable_legislation_policies: "",
-    observations: "",
-    recommendations: "",
+    legislative_policy_framework: "",
+    review_methodology: "",
+    tone_at_the_top: "",
+    review_details: "",
+    sequence_of_events: "",
+    findings: "",
+    conclusions: "",
+    recommendations: "pending",
     general: "",
+    fraud_prevention: "",
     conducted_by: userName,
+    reviewed_by: "",
+    approved_by: "",
     referred_department: "",
     status: "draft",
   });
@@ -72,17 +81,37 @@ export default function DraftFraudDetection() {
   const updateForm = (field: any, value: any) =>
     setFormData((prev) => ({ ...prev, [field]: value || "" }));
 
+  // Access verification function
+  const verifyAccess = async () => {
+    try {
+      const res = await apiCall(`${apiBackend}/fraud/prevention/auth/access/draft`);
+      if (res.status === 401) {
+        navigate("/login");
+        return false;
+      }
+      if (res.status === 403) {
+        setLoading(false);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      return false;
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const deptRes = await fetch("http://localhost:3000/api/preli/departments");
+        const allowed = await verifyAccess();
+        if (!allowed) return;
+
+        const deptRes = await apiCall(`${apiBackend}/preli/departments`);
         setPreliDepartments(await deptRes.json());
 
-        const fraudRes = await fetch(
-          `http://localhost:3000/api/fraud/detection/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const fraudRes = await apiCall(`${apiBackend}/fraud/prevention/${id}`);
 
         if (fraudRes.ok) {
           const fraudData = await fraudRes.json();
@@ -92,21 +121,27 @@ export default function DraftFraudDetection() {
 
             const sanitizedData = {
               ...existingData, 
-              background: existingData.background || "",
-              findings: existingData.findings || "",
-              conclusion: existingData.conclusion || "",
-              abbreviations_terms_definitions: existingData.abbreviations_terms_definitions || "",
+              executive_summary: existingData.executive_summary || "",
+              abbreviations: existingData.abbreviations || "",
               annexures: existingData.annexures || "",
+              individuals_featured: existingData.individuals_featured || "",
               mandate: existingData.mandate || "",
-              review_objective: existingData.review_objective || "",
-              approach_and_procedures_performed: existingData.approach_and_procedures_performed || "",
+              purpose_and_objective: existingData.purpose_and_objective || "",
+              scope_of_investigation: existingData.scope_of_investigation || "",
               restrictions_and_limitations: existingData.restrictions_and_limitations || "",
-              data_analyst_methodology: existingData.data_analyst_methodology || "",
-              applicable_legislation_policies: existingData.applicable_legislation_policies || "",
-              observations: existingData.observations || "",
-              recommendations: existingData.recommendations || "",
+              legislative_policy_framework: existingData.legislative_policy_framework || "",
+              review_methodology: existingData.review_methodology || "",
+              tone_at_the_top: existingData.tone_at_the_top || "",
+              review_details: existingData.review_details || "",
+              sequence_of_events: existingData.sequence_of_events || "",
+              findings: existingData.findings || "",
+              conclusions: existingData.conclusions || "",
+              recommendations: existingData.recommendations || "pending",
               general: existingData.general || "",
+              fraud_prevention: existingData.fraud_prevention || "",
               conducted_by: existingData.conducted_by || userName,
+              reviewed_by: existingData.reviewed_by || "",
+              approved_by: existingData.approved_by || "",
               referred_department: existingData.referred_department || "",
               status: existingData.status || "draft",
             };
@@ -121,7 +156,7 @@ export default function DraftFraudDetection() {
       }
     };
     fetchData();
-  }, [id, token, userName]);
+  }, [id, token, userName, navigate]);
 
   const handleAction = (type: "save" | "submit") => {
     setActionType(type);
@@ -136,14 +171,9 @@ export default function DraftFraudDetection() {
         conducted_by: userName || formData.conducted_by,
       };
 
-      const res = await fetch(
-        `http://localhost:3000/api/fraud/detection/case/update/${id}`,
-        {
+      const res = await apiCall(`${apiBackend}/fraud/prevention/case/update/${id}`,
+       {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify(dataToSend),
         }
       );
@@ -157,7 +187,7 @@ export default function DraftFraudDetection() {
         setTimeout(() => {
           setSessionMessage("");
           if (actionType === "submit") {
-            navigate("/fraud-detection");
+            navigate("/fraud/prevention");
           }
         }, 2000);
       } else {
@@ -172,7 +202,7 @@ export default function DraftFraudDetection() {
   };
 
   if (loading)
-    return <div className="loading">Loading fraud detection investigation...</div>;
+    return <div className="loading">Loading fraud prevention investigation...</div>;
 
   return (
     <>
@@ -180,7 +210,7 @@ export default function DraftFraudDetection() {
         {sessionMessage && <p className="session-message">{sessionMessage}</p>}
 
         <div className="preliminary-header">
-          <h1>Fraud Detection Investigation</h1>
+          <h1>Fraud Prevention Investigation</h1>
           {comments.length > 0 && (
             <button className="comment-btn" onClick={() => setShowComments(true)}>
               Read Comments
@@ -212,17 +242,15 @@ export default function DraftFraudDetection() {
         </div>
 
         <div className="preliminary-form-grid">
-          {/* Render all fraud detection fields */}
+          {/* Render all free-text fields except ID, preliminary_id, and assignment/status */}
           {Object.entries(formData).map(([key, value]) =>
             ![
               "id",
-              "fraud_prevention_id",
               "status",
               "conducted_by",
+              "reviewed_by",
+              "approved_by",
               "referred_department",
-              "assigned_to",
-              "created_at",
-              "updated_at",
             ].includes(key) ? (
               <div className="form-section" key={key}>
                 <h2>{key.replace(/_/g, " ").toUpperCase()}</h2>
@@ -230,11 +258,24 @@ export default function DraftFraudDetection() {
                   value={value as string}
                   onChange={(e) => updateForm(key, e.target.value)}
                   placeholder={key.replace(/_/g, " ")}
-                  rows={4}
+                  rows={3}
                 />
               </div>
             ) : null
           )}
+
+          <div className="form-section">
+            <h2>Recommendations</h2>
+            <select
+              value={formData.recommendations || "pending"}
+              onChange={(e) => updateForm("recommendations", e.target.value)}
+            >
+              <option value="pending">Pending</option>
+              <option value="close">Close</option>
+              <option value="full_investigation">Full Investigation</option>
+              <option value="refer">Refer to another Department</option>
+            </select>
+          </div>
         </div>
 
         <div className="submit-container">
@@ -249,8 +290,8 @@ export default function DraftFraudDetection() {
             <h3>Confirm {actionType === "save" ? "Save" : "Submission"}</h3>
             <p>
               {actionType === "save"
-                ? "Save this fraud detection investigation as draft?"
-                : "Submit this fraud detection investigation for review? This action cannot be undone."}
+                ? "Save this fraud prevention investigation as draft?"
+                : "Submit this fraud prevention investigation for review? This action cannot be undone."}
             </p>
             <div className="confirm-buttons">
               <button className="confirm-cancel" onClick={() => setShowConfirm(false)}>Cancel</button>

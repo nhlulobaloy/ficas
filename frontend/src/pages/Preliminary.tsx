@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import "../styles/Preliminary.css";
-import "../styles/ReviewIncident.css";
+import "../../styles/Preliminary.css";
+import "../../styles/ReviewIncident.css";
+import{ apiBackend, apiCall }from '../api/api.ts';
 
 
 interface Comment {
@@ -59,10 +60,7 @@ export default function PreliminaryInvestigationDashboard() {
   useEffect(() => {
     const fetchIncidents = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:3000/api/preliminary/assigned?page=${currentPage}limit=${itemsPerPage}`,
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const res = await apiCall(`${apiBackend}/preliminary/assigned?page=${currentPage}limit=${itemsPerPage}`);
         if (!res.ok) {
           throw new Error("Fetch failed");
         } else {

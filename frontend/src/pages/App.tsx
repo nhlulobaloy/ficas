@@ -1,26 +1,26 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Incident from "./Incident";
-import SignUp from "./SignUp";
-import Login from "./Login";
-import Preliminary from "./Preliminary";
-import PreliminaryInvestigation from "./DraftPreliminary";
-import PreliminaryReview from "./PreliminaryReview"; // Add this import
-import Layout from "./components/Layout";
-import ForensicInvestigation from "./ForensicInvestigation";
-import DraftFraudDetection from "./DraftFraudDetection";
-import DraftFraudPrevention from "./DraftFraudPrevention";
-import Forensic from "./Forensic";
-import ReviewForensic from "./ReviewForensic";
-import DraftForensic from "./DraftForensic";
-import { Review_Incident } from "./Review-Incident";
-import ReviewFraudPrevention from "./ReviewFraudPrevention";
-import FraudPrevention from "./FraudPrevention";
-import FraudDetection from "./FraudDetection";
-import UserManagement from "./UserManagement";
-import UpdateProfile from "./UpdateProfile";
-import ReviewFraudDetection from "./ReviewFraudDetection";
-import Home from "./Home";
+import Incident from "../pages/Incident";
+import SignUp from "../pages/SignUp";
+import Login from "../pages/Login";
+import Preliminary from "../pages/Preliminary";
+import PreliminaryInvestigation from "../pages/DraftPreliminary";
+import PreliminaryReview from "../pages/PreliminaryReview"; // Add this import
+import Layout from "../components/Layout";
+import ForensicInvestigation from "../pages/ForensicInvestigation";
+import DraftFraudDetection from "../pages/DraftFraudDetection";
+import DraftFraudPrevention from "../pages/DraftFraudPrevention";
+import Forensic from "../pages/Forensic";
+import ReviewForensic from "../pages/ReviewForensic";
+import DraftForensic from "../pages/DraftForensic";
+import { Review_Incident } from "./ReviewIncident";
+import ReviewFraudPrevention from "../pages/ReviewFraudPrevention";
+import FraudPrevention from "../pages/FraudPrevention";
+import FraudDetection from "../pages/FraudDetection";
+import UserManagement from "../pages/UserManagement";
+import UpdateProfile from "../pages/UpdateProfile";
+import ReviewFraudDetection from "../pages/ReviewFraudDetection";
+import Home from "../pages/Home";
 
 
 function App() {
