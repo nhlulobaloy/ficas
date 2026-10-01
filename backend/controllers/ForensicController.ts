@@ -506,7 +506,7 @@ export const getInvestigators = async (req: Request, res: Response) => {
     const sql = `SELECT id, name, email FROM users WHERE role = 'fraud_prevention_investigator'`;
     const [results] = await pool.execute(sql);
 
-    res.status(200).json({ message: "Success", data: results })
+    return res.status(200).json({ message: "Success", data: results })
 
   } catch (error) {
 
