@@ -96,7 +96,7 @@ export default function ReviewForensic() {
 
   const fetchInvestigators = async () => {
     try {
-      const res = await apiCall(`${apiBackend}/forensic/case/investgators`);
+      const res = await apiCall(`${apiBackend}/forensic/case/investigators`);
       const data = await res.json();
       setInvestigators(data.data || data || []);
     } catch (err) {
@@ -110,7 +110,7 @@ export default function ReviewForensic() {
       const allowed = await verifyAccess();
       if (!allowed) return;
 
-      const res = await apiCall(`${apiBackend}/forensic/case/reviewpage=$currentPage}&limit=${itemsPerPage}`);
+      const res = await apiCall(`${apiBackend}/forensic/case/review?page=${currentPage}&limit=${itemsPerPage}`);
       const data = await res.json();
       setInvestigations(data.data || []);
       setFilteredInvestigations(data.data || []);//pagination

@@ -68,7 +68,7 @@ const verifyAccess = async () => {
   }
 
   try {
-    const res = await apiCall(`${apiBackend}/api/incidents/auth/access`);
+    const res = await apiCall(`${apiBackend}/incidents/auth/access`);
     //const data = await res.json();
 
     if (res.status !== 200) {
@@ -97,9 +97,9 @@ const verifyAccess = async () => {
 
     try {
       const [incRes, invRes, depRes] = await Promise.all([
-        apiCall(`${apiBackend}/api/incidents?page=${currentPage}&limit=${itemsPerPage}`),
-        apiCall(`${apiBackend}/api/incidents/api/investigators`),
-        apiCall(`${apiBackend}/api/preli/departments`)
+        apiCall(`${apiBackend}/incidents?page=${currentPage}&limit=${itemsPerPage}`),
+        apiCall(`${apiBackend}/incidents/api/investigators`),
+        apiCall(`${apiBackend}/preli/departments`)
       ]);
 
       const incidentsData = await incRes.json();
@@ -161,7 +161,7 @@ const verifyAccess = async () => {
         return;
       }
 
-      const res = await apiCall(`${apiBackend}/api/incidents/${incidentId}`, {
+      const res = await apiCall(`${apiBackend}/incidents/${incidentId}`, {
         method: "PUT",
         body: JSON.stringify(updateData)
       });
