@@ -5,7 +5,7 @@ import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
 import Preliminary from "../pages/Preliminary";
 import PreliminaryInvestigation from "../pages/DraftPreliminary";
-import PreliminaryReview from "../pages/PreliminaryReview"; // Add this import
+import PreliminaryReview from "../pages/PreliminaryReview";
 import Layout from "../components/Layout";
 import ForensicInvestigation from "../pages/ForensicInvestigation";
 import DraftFraudDetection from "../pages/DraftFraudDetection";
@@ -21,7 +21,7 @@ import UserManagement from "../pages/UserManagement";
 import UpdateProfile from "../pages/UpdateProfile";
 import ReviewFraudDetection from "../pages/ReviewFraudDetection";
 import Home from "../pages/Home";
-
+import NotFound from "./NotFound.tsx";
 
 function App() {
   return (
@@ -30,6 +30,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+          <Route path="*" element={<NotFound />} />
         {/* Protected Routes with Layout */}
         <Route
           path="/Incident"
