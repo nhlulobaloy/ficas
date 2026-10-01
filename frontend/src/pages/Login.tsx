@@ -48,33 +48,37 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page-wrapper">
-      <div className="login-container">
-        <h1 className="system-title">Login</h1>
-        <input
-          placeholder="Email"
-          type="email"
-          onChange={(e) => setEmail(e.target.value)}
-          value={email}
-        />
-        <input
-          placeholder="Password"
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-        />
-        <button className="login-btn" onClick={handleSubmit} disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-        <span className="login-note">
+      <form onSubmit={handleSubmit}>
+        <div className="login-page-wrapper">
+          <div className="login-container">
+            <h1 className="system-title">Login</h1>
+            <input
+                placeholder="Email"
+                type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+            />
+
+            <input
+                placeholder="Password"
+                type="password"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+            />
+            <button className="login-btn" onClick={handleSubmit} disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+            <span className="login-note">mop
           Enter your credentials to access the dashboard
         </span>
-        <div className="login-footer">
-          <Link to="/" className="back-home-link">
-            ← Back to Home
-          </Link>
+            <div className="login-footer">
+              <Link to="/" className="back-home-link">
+                ← Back to Home
+              </Link>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </form>
+
   );
 }
