@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./NavBar.css";
 import axios from "axios";
+import {apiCall} from "../api/api.ts";
 
 const NavBar: React.FC = () => {
   interface User {
@@ -70,7 +71,7 @@ const NavBar: React.FC = () => {
   ];
 
   const handleLogout = async () => {
-    const { data } = await axios.delete(`http://localhost:3000/api/auth/logout`);
+    const data  = await apiCall(`http://localhost:3000/api/auth/logout`);
     const response = data;
     console.log(response);
     localStorage.removeItem("token");
