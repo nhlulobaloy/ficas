@@ -18,7 +18,7 @@ declare global {
 export const authMiddleware= (req: Request, res: Response, next: NextFunction) => {
     // get the token from the authorization
     const authHeader = req.header("Authorization")?.replace("Bearer ", "");
-    if(!authHeader) return res.status(401).json({message: 'No token found! check'});
+    if(!authHeader) return res.status(404).json({message: 'No token found! check'});
     try {
         const decoded = jwt.verify(authHeader, process.env.SECRET_KEY!) as any 
         req.user = {
