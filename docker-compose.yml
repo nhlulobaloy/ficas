@@ -10,9 +10,15 @@ services:
       MYSQL_PASSWORD: ${DB_EXTRA_PASSWORD}
     ports:
       - "3306:3306"
+    healthcheck:
+     test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot || exit 1" ]
+     interval: 10s
+     timeout: 5s
+     retries: 3
     volumes:
       - mysql_data:/var/lib/mysql
       - ./forensic_admin.sql:/docker-entrypoint-initdb.d/forensic_admin.sql:ro
+
   backend:
     container_name: ficas-backend
     build: ./backend
@@ -20,11 +26,22 @@ services:
       - "3000:3000"
     env_file:
       - ./backend/.env
+    depends_on:
+     mysql:
+       condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
   frontend:
     container_name: ficas-frontend
     build: ./frontend
     ports:
       - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 volumes:
   mysql_data:
+
     
