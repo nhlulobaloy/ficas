@@ -43,27 +43,27 @@ const NavBar: React.FC = () => {
   }, [token]); // ✅ Runs only when token changes
 
   const forensicOptions = [
-    { name: "Draft Forensic Investigation Report", path: "/Forensic" },
-    { name: "Review Forensic Investigation Report", path: "/review/forensic" },
+    { name: "Draft Forensic Investigation Report", path: "/forensic" },
+    { name: "Review Forensic Investigation Report", path: "/forensic/review" },
   ];
 
   const consequenceOptions = [
-    { name: "Draft Consequence Management", path: "/Consequence" },
-    { name: "Review Consequence Management", path: "/review-consequence" },
+    { name: "Draft Consequence Management", path: "/fonsequence" },
+    { name: "Review Consequence Management", path: "consequence/review" },
   ];
 
   const fraudPreventionOptions = [
-    { name: "Draft Fraud Prevention", path: "/fraud/prevention" },
-    { name: "Review Fraud Prevention", path: "/review/fraud/prevention" },
+    { name: "Draft Fraud Prevention", path: "/fraud-prevention" },
+    { name: "Review Fraud Prevention", path: "/fraud-prevention/review" },
   ];
 
   const fraudDetectionOptions = [
-    { name: "Draft Fraud Detection", path: "/fraud/detection" },
-    { name: "Review Fraud Detection", path: "/fraud/detection/review" },
+    { name: "Draft Fraud Detection", path: "/fraud-detection" },
+    { name: "Review Fraud Detection", path: "/fraud-detection/review" },
   ];
 
   const adminOptions = [
-    { name: "User & Access Management", path: "/user/management" },
+    { name: "User & Access Management", path: "/user-management" },
     { name: "Option 2", path: "/AdminView/option2" },
     { name: "Option 3", path: "/AdminView/option3" },
     { name: "Option 4", path: "/AdminView/option4" },
@@ -73,10 +73,7 @@ const NavBar: React.FC = () => {
     const { data } = await axios.delete(`http://localhost:3000/api/auth/logout`);
     const response = data;
     console.log(response);
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("name");
-    localStorage.removeItem("user_id");
+    localStorage.clear();
     setShowDropdown(false);
     navigate("/");
   };
@@ -201,13 +198,13 @@ const NavBar: React.FC = () => {
                   >
                     <button
                       className="dash-nav-hover-item"
-                      onClick={() => handleMenuItemClick("/Incident")}
+                      onClick={() => handleMenuItemClick("/incident")}
                     >
                       Create Incident
                     </button>
                     <button
                       className="dash-nav-hover-item"
-                      onClick={() => handleMenuItemClick("/review/incidents")}
+                      onClick={() => handleMenuItemClick("/incidents/review")}
                     >
                       Review Incident
                     </button>
@@ -233,7 +230,7 @@ const NavBar: React.FC = () => {
                   >
                     <button
                       className="dash-nav-hover-item"
-                      onClick={() => handleMenuItemClick("/Preliminary")}
+                      onClick={() => handleMenuItemClick("/preliminary")}
                     >
                       Draft Preliminary Investigation Report
                     </button>
@@ -416,7 +413,7 @@ const NavBar: React.FC = () => {
                   <div className="dash-dropdown-menu">
                     <button
                       className="dash-dropdown-item"
-                      onClick={() => navigate("/update/profile")}
+                      onClick={() => navigate("/profile/update")}
                     >
                       Update Profile
                     </button>
