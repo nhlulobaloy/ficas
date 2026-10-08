@@ -8,7 +8,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+    
+  // clear local storage if these page is reached
+    localStorage.clear();
   const handleSubmit = async () => {
     if (!email || !password) {
       alert("Please enter both email and password.");

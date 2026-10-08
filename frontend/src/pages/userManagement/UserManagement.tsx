@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import "../../styles/UserManagement.css";
-import axios from "axios";
-import { apiBackend, apiCall } from '../api/api.ts';
+import "../../../styles/UserManagement.css";
+import { apiBackend, apiCall } from '../../api/api.ts';
 
 
 interface User {

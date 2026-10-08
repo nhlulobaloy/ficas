@@ -1,8 +1,8 @@
 /* ForensicReview.tsx */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/PreliminaryReview.css";
-import{ apiBackend, apiCall } from '../api/api.ts';
+import "../../../styles/PreliminaryReview.css";
+import{ apiBackend, apiCall } from '../../api/api.ts';
 
 interface ForensicComment {
   id: number;

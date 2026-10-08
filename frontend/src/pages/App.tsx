@@ -1,25 +1,25 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Incident from "../pages/Incident";
+import Incident from "./incident/Incident";
 import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
-import Preliminary from "../pages/Preliminary";
-import PreliminaryInvestigation from "../pages/DraftPreliminary";
-import PreliminaryReview from "../pages/PreliminaryReview"; // Add this import
+import Preliminary from "../pages/preliminary/Preliminary";
+import PreliminaryInvestigation from "../pages/preliminary/DraftPreliminary";
+import PreliminaryReview from "../pages/preliminary/PreliminaryReview"; // Add this import
 import Layout from "../components/Layout";
-import ForensicInvestigation from "../pages/ForensicInvestigation";
-import DraftFraudDetection from "../pages/DraftFraudDetection";
-import DraftFraudPrevention from "../pages/DraftFraudPrevention";
-import Forensic from "../pages/Forensic";
-import ReviewForensic from "../pages/ReviewForensic";
-import DraftForensic from "../pages/DraftForensic";
-import { Review_Incident } from "./ReviewIncident";
-import ReviewFraudPrevention from "../pages/ReviewFraudPrevention";
-import FraudPrevention from "../pages/FraudPrevention";
-import FraudDetection from "../pages/FraudDetection";
-import UserManagement from "../pages/UserManagement";
-import UpdateProfile from "../pages/UpdateProfile";
-import ReviewFraudDetection from "../pages/ReviewFraudDetection";
+import ForensicInvestigation from "../pages/forensic/ForensicInvestigation";
+import DraftFraudDetection from "../pages/fraudDetection/DraftFraudDetection";
+import DraftFraudPrevention from "../pages/fraudPrevention/DraftFraudPrevention";
+import Forensic from "../pages/forensic/Forensic";
+import ReviewForensic from "../pages/forensic/ReviewForensic";
+import DraftForensic from "../pages/forensic/DraftForensic";
+import { Review_Incident } from "./incident/ReviewIncident";
+import ReviewFraudPrevention from "./fraudPrevention/ReviewFraudPrevention";
+import FraudPrevention from "./fraudPrevention/FraudPrevention";
+import FraudDetection from "../pages/fraudDetection/FraudDetection";
+import UserManagement from "../pages/userManagement/UserManagement";
+import UpdateProfile from "../pages/userManagement/UpdateProfile";
+import ReviewFraudDetection from "./fraudDetection/ReviewFraudDetection";
 import Home from "../pages/Home";
 
 
@@ -32,7 +32,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         {/* Protected Routes with Layout */}
         <Route
-          path="/Incident"
+          path="/incident"
           element={
             <Layout>
               <Incident />
@@ -40,7 +40,7 @@ function App() {
           }
         />
         <Route
-          path="/update/profile"
+          path="/profile-update"
           element={
             <Layout>
               <UpdateProfile />
@@ -48,7 +48,7 @@ function App() {
           }
         />
         <Route
-          path="/Preliminary"
+          path="/preliminary"
           element={
             <Layout>
               <Preliminary />
@@ -56,7 +56,7 @@ function App() {
           }
         />
         <Route
-          path="/review/fraud/prevention"
+          path="/fraud-prevention/review/"
           element={
             <Layout>
               <ReviewFraudPrevention />
@@ -64,7 +64,7 @@ function App() {
           }
         />
         <Route
-          path="/user/management"
+          path="/user-management"
           element={
             <Layout>
               <UserManagement />
@@ -80,7 +80,7 @@ function App() {
           }
         />
         <Route
-          path="/review/forensic"
+          path="/forensic/review"
           element={
             <Layout>
               <ReviewForensic />
@@ -88,7 +88,7 @@ function App() {
           }
         />
         <Route
-          path="/fraud/prevention"
+          path="/prevention-fraud"
           element={
             <Layout>
               <FraudPrevention />
@@ -96,7 +96,7 @@ function App() {
           }
         />
         <Route
-          path="/fraud/detection"
+          path="/fraud-detection"
           element={
             <Layout>
               <FraudDetection />
@@ -104,7 +104,7 @@ function App() {
           }
         />
         <Route
-          path="/draft/fraud/prevention/:id"
+          path="/prevention-fraud/draft/:id"
           element={
             <Layout>
               <DraftFraudPrevention />
@@ -112,7 +112,7 @@ function App() {
           }
         />
         <Route
-          path="/draft/fraud/detection/:id"
+          path="/fraud-detection/draft/:id"
           element={
             <Layout>
               <DraftFraudDetection />
@@ -121,7 +121,7 @@ function App() {
         />
 
         <Route
-        path="fraud/detection/review"
+        path="/fraud-detection/review"
         element={
           <Layout>
             <ReviewFraudDetection/>
@@ -129,7 +129,7 @@ function App() {
         }
         />
         <Route
-          path="/draft/forensic/:id"
+          path="/forensic/draft/:id"
           element={
             <Layout>
               <DraftForensic />
@@ -138,7 +138,7 @@ function App() {
         />
         {/* Review routes */}
         <Route
-          path="/review/incidents"
+          path="/incidents/review"
           element={
             <Layout>
               <Review_Incident />

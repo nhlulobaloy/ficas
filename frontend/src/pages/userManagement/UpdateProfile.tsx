@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import{ apiBackend,apiCall }from '../api/api.ts';
+import{ apiBackend,apiCall }from '../../api/api.ts';
 
 interface User {
   id: number;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/ReviewIncident.css";
-import{ apiBackend, apiCall }from '../api/api.ts';
+import "../../../styles/ReviewIncident.css";
+import { apiBackend, apiCall } from '../../api/api.ts';
 
 
 interface Incident {
@@ -52,49 +52,52 @@ export const Review_Incident = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [itemsPerPage] = useState(10);// fixed at 10;
+  const [timedOut, setTimedOut] = useState(false)
 
 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   // CENTRALIZED TOKEN + ROLE CHECK
-const verifyAccess = async () => {
-  if (!token) {
-    setSessionMessage("No session token. Please login.");
-    localStorage.removeItem('token');
-    setTimeout(() => navigate("/login"), 2000);
-    setHasAccess(false);
-    return false;
-  }
-
-  try {
-    const res = await apiCall(`${apiBackend}/api/incidents/auth/access`);
-    //const data = await res.json();
-
-    if (res.status !== 200) {
-      setHasAccess(false); // just block the page
+  const verifyAccess = async () => {
+    if (!token) {
+      setSessionMessage("No session token. Please login.");
+      localStorage.removeItem('token');
+      setTimeout(() => navigate("/login"), 2000);
+      setHasAccess(false);
       return false;
     }
 
-    setHasAccess(true);
-    return true;
-  } catch (err) {
-    console.error(err);
-    setSessionMessage("Session invalid. Please login.");
-    localStorage.removeItem('token');
-    setTimeout(() => navigate("/login"), 2000); // logout only for invalid token
-    setHasAccess(false);
-    return false;
-  }
-};
+    try {
+      const res = await apiCall(`${apiBackend}/incidents/auth/access`);
+      //const data = await res.json();
+
+      if (res.status !== 200) {
+        setHasAccess(false); // just block the page
+        return false && setLoading(false);
+      }
+
+      setHasAccess(true);
+      return true;
+    } catch (err) {
+      console.error(err);
+      setSessionMessage("Session invalid. Please login.");
+      localStorage.removeItem('token');
+      setTimeout(() => navigate("/login"), 2000); // logout only for invalid token
+      setHasAccess(false);
+      return false;
+    }
+  };
 
 
   // FETCH INCIDENTS, INVESTIGATORS, DEPARTMENTS
   const fetchData = async () => {
     const access = await verifyAccess();
-    if (!access) return;
-    
-
+  if (!access) {
+    setLoading(false); 
+    return;
+  
+  };
     try {
       const [incRes, invRes, depRes] = await Promise.all([
         apiCall(`${apiBackend}/api/incidents?page=${currentPage}&limit=${itemsPerPage}`),
@@ -106,7 +109,8 @@ const verifyAccess = async () => {
       const investigatorsData = await invRes.json();
       const departmentsData = await depRes.json();
 
-      if (incRes.ok) {setIncidents(incidentsData.data || []);
+      if (incRes.ok) {
+        setIncidents(incidentsData.data || []);
         setTotalPages(incidentsData.pagination.totalPages)
       }
       if (invRes.ok) setInvestigators(investigatorsData.data || []);
@@ -120,8 +124,16 @@ const verifyAccess = async () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [token,currentPage]);
+    setTimedOut(false); // Reset on page change
+    setLoading(true); // Reset loading
+    const timeout = setTimeout(() => {
+      console.log('timeout true')
+      setTimedOut(true);
+    }, 5000);
+    
+
+    fetchData().finally(() => clearTimeout(timeout))
+  }, [token, currentPage]);
 
   // Populate modal fields when an incident is selected
   useEffect(() => {
@@ -222,8 +234,10 @@ const verifyAccess = async () => {
     return incident.recommendations || 'pending';
   };
 
-  if (loading) return <div className="loading">Loading incidents...</div>;
-  if (hasAccess === false) return <div className="access-denied">Access denied</div>;
+
+  if (loading && !timedOut) return <div className="loading">Loading incidents...</div>;
+  if (timedOut && loading) return null; // show white screen when timout is reached
+  if (hasAccess === false) return null;
 
   return (
     <div className="review-container">
@@ -236,71 +250,70 @@ const verifyAccess = async () => {
           <div className="no-incidents">No incidents found</div>
         ) : (
           <>
-          <table>
-            <thead>
-              <tr>
-                <th>Incident #</th>
-                <th>Complainant</th>
-                <th>Date</th>
-                <th>Category</th>
-                <th>Management Action</th>
-                <th>Status/Action</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {incidents.map((incident) => (
-                <tr key={incident.id}>
-                  <td>{incident.incident_number || `INC-${incident.id}`}</td>
-                  <td>{incident.complainant_name}</td>
-                  <td>{incident.incident_date ? new Date(incident.incident_date).toLocaleDateString() : 'N/A'}</td>
-                  <td>{incident.category_name || incident.category || 'N/A'}</td>
-                  <td>
-                    <span className={`status-badge ${getStatusColor(incident.recommendations)} ${
-                      incident.recommendations === 'pending' ? 'bold-text' : ''
-                    }`}>
-                      {incident.recommendations || 'pending'}
-                    </span>
-                  </td>
-                  <td className="text-small">
-                    {getDisplayText(incident)}
-                  </td>
-                  <td>
-                    <button 
-                      className="view-btn"
-                      onClick={() => setSelectedIncident(incident)}
-                    >
-                      Manage
-                    </button>
-                  </td>
+            <table>
+              <thead>
+                <tr>
+                  <th>Incident #</th>
+                  <th>Complainant</th>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>Management Action</th>
+                  <th>Status/Action</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {/*pagination should be placed here */}
-          {totalPages > 1 && (
-                      <div className="pagination">
-          <button  onClick={() => setCurrentPage(prev => prev - 1)} 
-            disabled = {currentPage === 1}
-            >
-           Previous
-          </button>
-          <span>Page {currentPage} of {totalPages}</span>
+              </thead>
+              <tbody>
+                {incidents.map((incident) => (
+                  <tr key={incident.id}>
+                    <td>{incident.incident_number || `INC-${incident.id}`}</td>
+                    <td>{incident.complainant_name}</td>
+                    <td>{incident.incident_date ? new Date(incident.incident_date).toLocaleDateString() : 'N/A'}</td>
+                    <td>{incident.category_name || incident.category || 'N/A'}</td>
+                    <td>
+                      <span className={`status-badge ${getStatusColor(incident.recommendations)} ${incident.recommendations === 'pending' ? 'bold-text' : ''
+                        }`}>
+                        {incident.recommendations || 'pending'}
+                      </span>
+                    </td>
+                    <td className="text-small">
+                      {getDisplayText(incident)}
+                    </td>
+                    <td>
+                      <button
+                        className="view-btn"
+                        onClick={() => setSelectedIncident(incident)}
+                      >
+                        Manage
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {/*pagination should be placed here */}
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button onClick={() => setCurrentPage(prev => prev - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+                <span>Page {currentPage} of {totalPages}</span>
 
-          {/*Next button - goes forward one page */}
+                {/*Next button - goes forward one page */}
 
-          <button onClick={() => setCurrentPage(prev => prev + 1)}
-             disabled = {currentPage === totalPages }
-            >
-           
-          Next
-          </button>
-          </div>
-          )}
+                <button onClick={() => setCurrentPage(prev => prev + 1)}
+                  disabled={currentPage === totalPages}
+                >
 
-         </>
+                  Next
+                </button>
+              </div>
+            )}
+
+          </>
         )}
-        
+
       </div>
 
       {/* Incident Management Modal */}
@@ -308,7 +321,7 @@ const verifyAccess = async () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Incident Management Action</h3>
-            
+
             <div className="details-grid">
               <div className="detail-item">
                 <strong>Incident #:</strong> {selectedIncident.incident_number || `INC-${selectedIncident.id}`}
@@ -326,10 +339,9 @@ const verifyAccess = async () => {
                 <strong>Location:</strong> {selectedIncident.location || 'N/A'}
               </div>
               <div className="detail-item">
-                <strong>Current Status:</strong> 
-                <div className={`status-badge ${getStatusColor(selectedIncident.recommendations)} ${
-                  selectedIncident.recommendations === 'pending' ? 'bold-text' : ''
-                }`}>
+                <strong>Current Status:</strong>
+                <div className={`status-badge ${getStatusColor(selectedIncident.recommendations)} ${selectedIncident.recommendations === 'pending' ? 'bold-text' : ''
+                  }`}>
                   {selectedIncident.recommendations || 'pending'}
                 </div>
               </div>
@@ -338,20 +350,20 @@ const verifyAccess = async () => {
               </div>
               {selectedIncident.assigned_investigator_name && (
                 <div className="detail-item">
-                  <strong>Assigned Investigator:</strong> 
+                  <strong>Assigned Investigator:</strong>
                   <div className="text-small">{selectedIncident.assigned_investigator_name}</div>
                 </div>
               )}
               {selectedIncident.referred_department && (
                 <div className="detail-item">
-                  <strong>Referred Department:</strong> 
+                  <strong>Referred Department:</strong>
                   <div className="text-small">
                     {departments.find(d => d.id.toString() === selectedIncident.referred_department)?.name || selectedIncident.referred_department}
                   </div>
                 </div>
               )}
               <div className="detail-item full-width">
-                <strong>Details:</strong> 
+                <strong>Details:</strong>
                 <div className="details-text">{selectedIncident.details || 'No details provided'}</div>
               </div>
             </div>
@@ -380,7 +392,7 @@ const verifyAccess = async () => {
                     <option value="refer to department">Refer to Department</option>
                   </select>
                 </div>
-                
+
                 {/* Show investigator dropdown only when "refer to preliminary" is selected */}
                 {managementAction === 'refer to preliminary' && (
                   <div className="assignment-item">
@@ -399,7 +411,7 @@ const verifyAccess = async () => {
                     </select>
                   </div>
                 )}
-                
+
                 {/* Show department dropdown only when "refer to department" is selected */}
                 {managementAction === 'refer to department' && (
                   <div className="assignment-item">
@@ -424,8 +436,8 @@ const verifyAccess = async () => {
                 <button className="cancel-btn" onClick={() => setSelectedIncident(null)}>
                   Cancel
                 </button>
-                <button 
-                  className="update-btn" 
+                <button
+                  className="update-btn"
                   onClick={() => handleUpdate(selectedIncident.id)}
                   disabled={
                     (managementAction === 'refer to preliminary' && !selectedInvestigator) ||
