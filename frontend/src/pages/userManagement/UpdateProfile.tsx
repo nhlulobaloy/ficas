@@ -17,11 +17,15 @@ export default function UpdateProfile() {
   const [email, setEmail] = useState("");
 
 
-//get the user data
+// get the user data
   const getUser = async () => {
     const res = await apiCall(`${apiBackend}/profile`);
     const data = await res.json();
     setUserData(data);
+    if (userData) {
+      setName(userData.name || 'User');
+      setEmail(userData.email || 'User');
+    }
   };
 //send the request to the backend
   const updateUser = async () => {
@@ -30,19 +34,14 @@ export default function UpdateProfile() {
     method: 'POST',
     body: JSON.stringify(data)
    })
-  await getUser();
+
+    await getUser();
   }
 
   useEffect(() => {
     getUser();
   }, [token, setUserData]);
 
-useEffect(() => {
-  if (userData) {
-    setName(userData.name);
-    setEmail(userData.email);
-  }
-}, [userData]);
   //getUser()
   if (!userData) return <div>Loading...</div>;
   return (

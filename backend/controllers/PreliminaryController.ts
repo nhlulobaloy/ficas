@@ -612,7 +612,7 @@ export const getIncidentsAssigned = async (req: Request, res: Response) => {
        ORDER BY u.id ASC
        LIMIT ? OFFSET ?
        `;
-    const [result] = await pool.execute<RowDataPacket[]>(sql, [tokenId, limit, offset]);
+    const [result] = await pool.query<RowDataPacket[]>(sql, [tokenId, limit, offset]);
     const total = getTotal[0].total
     return res.status(200).json({
       message: 'success',

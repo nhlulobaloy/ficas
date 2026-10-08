@@ -88,9 +88,9 @@ export const refreshToken = async (req: Request, res: Response) => {
     if (rows.length === 0) return res.status(403).json({ message: "Invalid refresh token" });
 
     // return the new token if all the check are passed
-    res.json({ token: tokenData.token });
+    return res.json({ token: tokenData.token });
   } catch (error) {
-    res.status(403).json({ message: "Invalid refresh token" });
+    return res.status(403).json({ message: "Invalid refresh token" });
   }
 };
 
@@ -137,7 +137,11 @@ export const Login = async (req: Request, res: Response, next: NextFunction) => 
       process.env.REFRESH_SECRET!,  // Different secret
       { expiresIn: "7d" }  // 7 days
     );
-
+    // check if token exists
+    const checkToken = await pool.query('SELECT * FROM refresh_tokens WHERE user_id = ?', [user.id]);
+    if(checkToken.length > 0) {
+      await pool.query('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id])
+    }
     await pool.query(
       "INSERT INTO refresh_tokens (user_id, refreshToken) VALUES (?, ?)",
       [user.id, refreshToken]
@@ -189,7 +193,7 @@ export const logout = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     // check if token exists
-    if (!user) return res.status(401).json({ "message": "invalid token" })
+    if (!user) return res.status(500).json({ "message": "invalid token" })
     // delete the user refresh token from the database using the user id
     const [result] = await pool.execute('DELETE FROM refresh_tokens WHERE user_id = ?', [user.id])
     // clear the cookie in the browser

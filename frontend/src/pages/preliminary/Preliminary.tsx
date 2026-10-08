@@ -60,7 +60,7 @@ export default function PreliminaryInvestigationDashboard() {
   useEffect(() => {
     const fetchIncidents = async () => {
       try {
-        const res = await apiCall(`${apiBackend}/preliminary/assigned?page=${currentPage}limit=${itemsPerPage}`);
+        const res = await apiCall(`${apiBackend}/preliminary/assigned?page=${currentPage}&limit=${itemsPerPage}`);
         if (!res.ok) {
           throw new Error("Fetch failed");
         } else {

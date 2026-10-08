@@ -21,7 +21,7 @@ import UserManagement from "../pages/userManagement/UserManagement";
 import UpdateProfile from "../pages/userManagement/UpdateProfile";
 import ReviewFraudDetection from "./fraudDetection/ReviewFraudDetection";
 import Home from "../pages/Home";
-
+import NotFound from "./NotFound.tsx";
 
 function App() {
   return (
@@ -30,6 +30,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/Login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+          <Route path="*" element={<NotFound />} />
         {/* Protected Routes with Layout */}
         <Route
           path="/incident"

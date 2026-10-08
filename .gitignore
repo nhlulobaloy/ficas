@@ -1,4 +1,4 @@
 node_modules/
 .env
 forensic_admin.sql
-.idea/
+.idea
