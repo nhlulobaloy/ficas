@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import "../../styles/Incident.css";
 import { useNavigate } from "react-router-dom";
-import{ apiBackend, apiCall }from '../api/api';
+import { apiBackend, apiCall } from "../api/api";
+import axios from "axios";
 
 interface Category {
   id: number;
@@ -41,67 +42,83 @@ export default function Incident() {
     sapsNumber,
   };
 
-  // Secure verification
+  // Verify token + role
   const verifyAccess = async (): Promise<boolean> => {
     if (!token) {
-      navigate("/login"); // logout only if no token
+      navigate("/login");
       return false;
     }
-
     try {
-      // Verify role + token in backend
-      const res = await apiCall(
-        `${apiBackend}/incidents/`,
-        {
-          method: "POST",
-        }
+      const { data } = await axios.post(
+          `${apiBackend}/incidents/auth`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
       );
-
-      const data = await res.json();
-
-      if (res.status === 200 && data.message === "access granted") {
-        setHasAccess(true);
-        return true;
-      }
-
-      // Role denied (white screen)
-      setHasAccess(false);
-      return false;
+      const granted = data?.success === "true" || data?.success === true;
+      setHasAccess(granted);
+      return granted;
     } catch (err) {
       console.error(err);
-      setSessionMessage("Server error during verification");
+      setHasAccess(false);
       return false;
     }
   };
 
-  // Handle submit
+  // Reset form
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setContact("");
+    setDate("");
+    setTime("");
+    setLocation("");
+    setDetails("");
+    setSapsNumber("");
+    setSuspectDetails("");
+    setSelectedCategory("");
+    setPreviewOpen(false);
+  };
+
+  // Validate required (*) fields
+  const validate = (): boolean => {
+    const missing =
+        !name.trim() ||
+        !email.trim() ||
+        !contact.trim() ||
+        !date ||
+        !time ||
+        !location.trim() ||
+        !selectedCategory ||
+        !details.trim();
+
+    if (missing) {
+      alert("Please fill in all required (*) fields.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validate()) return;
     const access = await verifyAccess();
-    if (!access) return;
+    if (!access) return console.log("no access");
 
     try {
       const res = await apiCall(`${apiBackend}/incidents`, {
-          method: "POST",
-          body: JSON.stringify(userData),
-        },
-      );
+        method: "POST",
+        body: JSON.stringify(userData),
+      });
       const data = await res.json();
 
       if (data.message === "Incident created") {
         setSessionMessage("Incident Created Successfully");
         setTimeout(() => setSessionMessage(""), 2000);
-
-        // Clear all fields
-        setName("");
-        setEmail("");
-        setContact("");
-        setDate("");
-        setTime("");
-        setLocation("");
-        setDetails("");
-        setSapsNumber("");
-        setSuspectDetails("");
-        setPreviewOpen(false);
+        resetForm();
       } else {
         alert("Error creating incident");
       }
@@ -111,7 +128,7 @@ export default function Incident() {
     }
   };
 
-  // On mount: verify access & fetch categories
+  // On mount: verify access + fetch categories
   useEffect(() => {
     const init = async () => {
       const access = await verifyAccess();
@@ -119,164 +136,151 @@ export default function Incident() {
 
       try {
         const res = await apiCall(`${apiBackend}/categories/`);
-        const categories = await res.json();
-        setOptionCategory(categories);
+        const raw = await res.json();
+
+        // Normalize: array | { categories: [] } | { data: [] } | anything else → []
+        const list: Category[] = Array.isArray(raw)
+            ? raw
+            : Array.isArray(raw?.categories)
+                ? raw.categories
+                : Array.isArray(raw?.data)
+                    ? raw.data
+                    : [];
+
+        setOptionCategory(list);
       } catch (err) {
         console.error(err);
+        setOptionCategory([]);
       }
     };
-
     init();
   }, [token]);
 
-  // White screen if role denied
   if (hasAccess === false) return null;
+
   return (
-    <><h2 className="dashboard-title">Create Incident</h2>
-      <div className="form-contianer" style={{ marginTop: "8px" }}>
-        {sessionMessage && <p className="sessionMessage">{sessionMessage}</p>}
-         
-        <div className="form-grid">
-          
-          <h2>Complainant Details</h2>
+      <>
+        <h2 className="dashboard-title">Create Incident</h2>
+        <div className="form-contianer" style={{ marginTop: "8px" }}>
+          {sessionMessage && <p className="sessionMessage">{sessionMessage}</p>}
 
-          {/* LEFT COLUMN - Complainant Details */}
-          <div className="form-section">
-            <input
-              placeholder="Full names *"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <input
-              placeholder="Email address *"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              placeholder="Contact number *"
-              value={contact}
-              onChange={(e) => setContact(e.target.value)}
-            />
-          </div>
+          <div className="form-grid">
+            <h2>Complainant Details</h2>
 
-          {/* RIGHT COLUMN - Incident Details */}
-          <div className="form-section">
-            <h2>Incident Details</h2>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-            />
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Location"
-            />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="">Select Category</option>
-              {optionCategory.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
+            <div className="form-section">
+              <input
+                  placeholder="Full names *"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+              />
+              <input
+                  placeholder="Email address *"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                  placeholder="Contact number *"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+              />
+            </div>
 
-          {/* BOTTOM FULL WIDTH SECTION */}
-          <div className="full-width">
-            <input
-              className="details"
-              type="text"
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              placeholder="Incident Details *"
-            />
-            <input
-              className="details"
-              type="text"
-              value={suspectDetails}
-              onChange={(e) => setSuspectDetails(e.target.value)}
-              placeholder="Suspect Details"
-            />
-            <input
-              type="text"
-              value={sapsNumber}
-              onChange={(e) => setSapsNumber(e.target.value)}
-              placeholder="SAPS case number (Optional)"
-            />
-          </div>
-
-          {/* BUTTONS */}
-          <div className="button-container">
-            <button onClick={() => setPreviewOpen(true)}>Preview Report</button>
-            <button onClick={handleSubmit}>Create Incident</button>
-          </div>
-        </div>
-      </div>
-
-      {/* PREVIEW MODAL */}
-      {previewOpen && (
-        <div className="preview-modal">
-          <div className="preview-content">
-            <h2>Incident Preview</h2>
-            <p>
-              <strong>Name:</strong> {name}
-            </p>
-            <p>
-              <strong>Email:</strong> {email}
-            </p>
-            <p>
-              <strong>Contact:</strong> {contact}
-            </p>
-            <p>
-              <strong>Date:</strong> {date}
-            </p>
-            <p>
-              <strong>Time:</strong> {time}
-            </p>
-            <p>
-              <strong>Location:</strong> {location}
-            </p>
-            <p>
-              <strong>Category:</strong>{" "}
-              {
-                optionCategory.find((c) => String(c.id) === selectedCategory)
-                  ?.name
-              }
-            </p>
-            <p>
-              <strong>Details:</strong> {details}
-            </p>
-            <p>
-              <strong>Suspect Details:</strong> {suspectDetails}
-            </p>
-            <p>
-              <strong>SAPS Number:</strong> {sapsNumber}
-            </p>
-
-            <div className="modal-buttons">
-              <button
-                className="review-button"
-                onClick={() => setPreviewOpen(false)}
+            <div className="form-section">
+              <h2>Incident Details</h2>
+              <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+              />
+              <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+              />
+              <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Location *"
+              />
+              <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
               >
-                Close
-              </button>
-              <button className="review-button" onClick={handleSubmit}>
-                Submit Now
-              </button>
+                <option value="">Select Category</option>
+                {Array.isArray(optionCategory) &&
+                    optionCategory.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                    ))}
+              </select>
+            </div>
+
+            <div className="full-width">
+              <input
+                  className="details"
+                  type="text"
+                  value={details}
+                  onChange={(e) => setDetails(e.target.value)}
+                  placeholder="Incident Details *"
+              />
+              <input
+                  className="details"
+                  type="text"
+                  value={suspectDetails}
+                  onChange={(e) => setSuspectDetails(e.target.value)}
+                  placeholder="Suspect Details"
+              />
+              <input
+                  type="text"
+                  value={sapsNumber}
+                  onChange={(e) => setSapsNumber(e.target.value)}
+                  placeholder="SAPS case number (Optional)"
+              />
+            </div>
+
+            <div className="button-container">
+              <button onClick={() => setPreviewOpen(true)}>Preview Report</button>
+              <button onClick={handleSubmit}>Create Incident</button>
             </div>
           </div>
         </div>
-      )}
-    </>
+
+        {previewOpen && (
+            <div className="preview-modal">
+              <div className="preview-content">
+                <h2>Incident Preview</h2>
+                <p><strong>Name:</strong> {name}</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p><strong>Contact:</strong> {contact}</p>
+                <p><strong>Date:</strong> {date}</p>
+                <p><strong>Time:</strong> {time}</p>
+                <p><strong>Location:</strong> {location}</p>
+                <p>
+                  <strong>Category:</strong>{" "}
+                  {Array.isArray(optionCategory) &&
+                      optionCategory.find((c) => String(c.id) === selectedCategory)
+                          ?.name}
+                </p>
+                <p><strong>Details:</strong> {details}</p>
+                <p><strong>Suspect Details:</strong> {suspectDetails}</p>
+                <p><strong>SAPS Number:</strong> {sapsNumber}</p>
+
+                <div className="modal-buttons">
+                  <button
+                      className="review-button"
+                      onClick={() => setPreviewOpen(false)}
+                  >
+                    Close
+                  </button>
+                  <button className="review-button" onClick={handleSubmit}>
+                    Submit Now
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
+      </>
   );
 }

@@ -598,10 +598,10 @@ export default function PreliminaryReview() {
                       onChange={(e) => setManagementAction(e.target.value as any)}
                     >
                       <option value="">-- Select Action --</option>
-                      <option value="assign_investigator">Assign to Investigator</option>
-                      <option value="close_case">Close Case</option>
+                      <option value="assign_investigator">Refer for full Investigation</option>
+                      <option value="close_case">Close Prelim</option>
                       <option value="refer_department">Refer to Department</option>
-                      <option value="return">Return to Investigator</option>
+                      <option value="return">Return to Officer</option>
                     </select>
                   </div>
 
