@@ -3,7 +3,7 @@ import pool from '../config/db.js';
 
 export const getCategory = async (req: Request, res: Response) => {
     try {
-        const sql = `SELECT * FROM CATEGORIES`;
+        const sql = `SELECT * FROM categories`;
         const rows = await pool.query(sql);
         return res.json(rows[0]) 
     } catch (error) {
