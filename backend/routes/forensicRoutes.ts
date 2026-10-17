@@ -9,10 +9,10 @@ import {
     getIndividuals, saveIndividuals,
     getAnnexures, saveAnnexures,
 } from '../controllers/ForensicController.js';
+
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
-
 // --- specific routes first ---
 router.get('/auth/access', verifyAccessReviewForensic);
 router.get('/review/:id', getForensicReview);
