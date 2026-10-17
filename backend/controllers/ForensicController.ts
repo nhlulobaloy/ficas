@@ -574,4 +574,158 @@ export const assignInvestigator = async (req: Request, res: Response) => {
   }
 };
 
+// ============================================================
+// DISTRIBUTION LIST — controllers for the A. table
+// ============================================================
+
+// GET all distribution rows for a forensic report
+export const getDistributionList = async (req: Request, res: Response) => {
+  const { forensicId } = req.params;
+
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+        "SELECT * FROM forensic_distribution_list WHERE forensic_id = ? ORDER BY no",
+        [forensicId]
+    );
+
+    return res.status(200).json({ data: rows });
+  } catch (err) {
+    console.error("getDistributionList error:", err);
+    return res
+        .status(500)
+        .json({ error: "Failed to load distribution list" });
+  }
+};
+
+// PUT bulk-save (replace-all)
+export const saveDistributionList = async (req: Request, res: Response) => {
+  const { forensicId } = req.params;
+  const { rows } = req.body as {
+    rows: Array<{
+      no: number;
+      name_and_designation: string;
+      action: boolean;
+      action_support: boolean;
+      information: boolean;
+    }>;
+  };
+
+  if (!Array.isArray(rows)) {
+    return res.status(400).json({ error: "rows must be an array" });
+  }
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    await conn.query(
+        "DELETE FROM forensic_distribution_list WHERE forensic_id = ?",
+        [forensicId]
+    );
+
+    for (const r of rows) {
+      await conn.query(
+          `INSERT INTO forensic_distribution_list
+           (forensic_id, no, name_and_designation, action, action_support, information)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+          [
+            forensicId,
+            r.no,
+            r.name_and_designation || "",
+            r.action ? 1 : 0,
+            r.action_support ? 1 : 0,
+            r.information ? 1 : 0,
+          ]
+      );
+    }
+
+    await conn.commit();
+    return res.status(200).json({ message: "Saved" });
+  } catch (err) {
+    await conn.rollback();
+    console.error("saveDistributionList error:", err);
+    return res
+        .status(500)
+        .json({ error: "Failed to save distribution list" });
+  } finally {
+    conn.release();
+  }
+};
+
+// ForensicController.ts
+
+const tableMap = {
+  abbreviations: "forensic_abbreviations",
+  phrases: "forensic_phrases",
+  individuals: "forensic_individuals",
+  annexures: "forensic_annexures",
+} as const;
+
+type Section = keyof typeof tableMap;
+
+// Generic GET
+export const getRows = (section: Section) => async (req: Request, res: Response) => {
+  const table = tableMap[section];
+  const { forensicId } = req.params;
+  try {
+    const [rows] = await pool.query<RowDataPacket[]>(
+        `SELECT * FROM ${table} WHERE forensic_id = ? ORDER BY no`,
+        [forensicId]
+    );
+    return res.json({ data: rows });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to load rows" });
+  }
+};
+
+// Generic bulk-save (replace-all)
+export const saveRows = (section: Section) => async (req: Request, res: Response) => {
+  const table = tableMap[section];
+  const { forensicId } = req.params;
+  const { rows } = req.body as { rows: any[] };
+  if (!Array.isArray(rows)) return res.status(400).json({ error: "rows must be an array" });
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    await conn.query(`DELETE FROM ${table} WHERE forensic_id = ?`, [forensicId]);
+
+    for (const r of rows) {
+      if (section === "individuals") {
+        await conn.query(
+            `INSERT INTO ${table} (forensic_id, no, name, position) VALUES (?, ?, ?, ?)`,
+            [forensicId, r.no, r.name || "", r.position || ""]
+        );
+      } else {
+        await conn.query(
+            `INSERT INTO ${table} (forensic_id, no, label, description) VALUES (?, ?, ?, ?)`,
+            [forensicId, r.no, r.label || "", r.description || ""]
+        );
+      }
+    }
+
+    await conn.commit();
+    return res.json({ message: "Saved" });
+  } catch (err) {
+    await conn.rollback();
+    console.error(err);
+    return res.status(500).json({ error: "Failed to save rows" });
+  } finally {
+    conn.release();
+  }
+};
+
+
+
+// Export specific handlers
+export const getAbbreviations = getRows("abbreviations");
+export const saveAbbreviations = saveRows("abbreviations");
+export const getPhrases = getRows("phrases");
+export const savePhrases = saveRows("phrases");
+export const getIndividuals = getRows("individuals");
+export const saveIndividuals = saveRows("individuals");
+export const getAnnexures = getRows("annexures");
+export const saveAnnexures = saveRows("annexures");
+
 

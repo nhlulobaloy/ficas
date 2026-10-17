@@ -96,8 +96,8 @@ export default function PreliminaryInvestigation() {
 
         // Categories and departments
         const [catRes, deptRes] = await Promise.all([
-          apiCall("${apiBackend}/preli/categories"),
-          apiCall("${apiBackend}/preli/departments"),
+          apiCall(`${apiBackend}/preli/categories`),
+          apiCall(`${apiBackend}/preli/departments`),
         ]);
         setPreliCategories(await catRes.json());
         setPreliDepartments(await deptRes.json());

@@ -1,23 +1,44 @@
 import express from 'express';
-import { referToDepartment, assignInvestigator, getInvestigators, getPreliminary,  getForensics/*closeForensicCase*/, closeCase, returnPreliminary, getForensic, updateForensic, verifyAccessReviewForensic, getForensicReview} from '../controllers/ForensicController.js';
+import {
+    referToDepartment, assignInvestigator, getInvestigators, getPreliminary,
+    getForensics, closeCase, returnPreliminary, getForensic, updateForensic,
+    verifyAccessReviewForensic, getForensicReview,
+    getDistributionList, saveDistributionList,
+    getAbbreviations, saveAbbreviations,
+    getPhrases, savePhrases,
+    getIndividuals, saveIndividuals,
+    getAnnexures, saveAnnexures,
+} from '../controllers/ForensicController.js';
 import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
-router.put('/refer/:id', referToDepartment);//refer the forensic case
-router.put('/close/:id', closeCase);//close the forensic
-router.post('/return/:id', returnPreliminary)//return the preliminary
-router.get('/:id', getForensic)//get a single a forensic
-router.put('/update/:id', updateForensic)//update a single forensic
-router.get('/auth/access', verifyAccessReviewForensic)//verify the access to the page
 
-router.get('/', authMiddleware, getPreliminary);//get a list of preliminary to display to the forensic
-//router.get('/api/investigators', getForensicInvestigators);//get the forensic investigators
-router.get('/review/:id', getForensicReview);//get the case for the review team
+// --- specific routes first ---
+router.get('/auth/access', verifyAccessReviewForensic);
+router.get('/review/:id', getForensicReview);
+router.get('/case/review/', getForensics);
+router.get('/case/investigators', getInvestigators);
+router.put('/case/assign/:id', assignInvestigator);
 
-router.get('/case/review/', getForensics);//get a list of preliminary to display to the forensic
-router.get('/case/investigators', getInvestigators);//get a list of preliminary to display to the forensic
-router.put('/case/assign/:id', assignInvestigator);//
+router.get('/distribution/:forensicId', authMiddleware, getDistributionList);
+router.put('/distribution/:forensicId', authMiddleware, saveDistributionList);
 
-//router.put('/close-forensic-case/:id', closeForensicCase); 
+router.get("/abbreviations/:forensicId", authMiddleware, getAbbreviations);
+router.put("/abbreviations/:forensicId", authMiddleware, saveAbbreviations);
+router.get("/phrases/:forensicId",       authMiddleware, getPhrases);
+router.put("/phrases/:forensicId",       authMiddleware, savePhrases);
+router.get("/individuals/:forensicId",   authMiddleware, getIndividuals);
+router.put("/individuals/:forensicId",   authMiddleware, saveIndividuals);
+router.get("/annexures/:forensicId",     authMiddleware, getAnnexures);
+router.put("/annexures/:forensicId",     authMiddleware, saveAnnexures);
 
-export default router; 
+router.put('/refer/:id', referToDepartment);
+router.put('/close/:id', closeCase);
+router.post('/return/:id', returnPreliminary);
+router.put('/update/:id', updateForensic);
+router.get('/', authMiddleware, getPreliminary);
+
+// --- wildcard LAST ---
+router.get('/:id', getForensic);
+
+export default router;

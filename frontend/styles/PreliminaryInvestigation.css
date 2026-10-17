@@ -404,3 +404,95 @@
   font-size: 14px;
   color: #333;
 }
+/* Table container */
+.form-section.full-width {
+  grid-column: 1 / -1;
+}
+
+.distribution-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  table-layout: auto;
+}
+
+.distribution-table th,
+.distribution-table td {
+  border: 1px solid #333;
+  padding: 6px;
+  vertical-align: middle;
+}
+
+.distribution-table th {
+  background: #d9d9d9;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* NO column — keep it tiny */
+.distribution-table th:first-child,
+.distribution-table td:first-child {
+  width: 50px;
+  text-align: center;
+  padding: 4px;
+}
+
+/* Compact number input — no spinners, fits a 1-2 digit value */
+.dist-no {
+  width: 36px;
+  text-align: center;
+  padding: 2px 4px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  -moz-appearance: textfield;   /* Firefox */
+  appearance: textfield;
+}
+
+/* Chrome, Safari, Edge — remove spinner arrows */
+.dist-no::-webkit-outer-spin-button,
+.dist-no::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Textarea inside cells — full width */
+.distribution-table textarea {
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+/* Checkbox columns — center and keep narrow */
+.dist-check {
+  text-align: center;
+  width: 90px;
+}
+
+/* Add-row button */
+.dist-add {
+  margin-top: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+/* Remove-row button */
+.dist-remove {
+  background: transparent;
+  border: none;
+  color: #b00;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+}
+
+/* Note under the heading */
+.dist-note {
+  font-size: 13px;
+  margin: 4px 0 8px;
+}

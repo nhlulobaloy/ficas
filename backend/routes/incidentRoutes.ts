@@ -1,6 +1,7 @@
 import express from 'express';
 import { createIncident, getIncidents, getIncidentInvestigators, getIncident, updateIncident, verifyAccessCreate, verifyAccessAssign } from '../controllers/IncidentController.js';
 import { authMiddleware } from '../middleware/auth.js';
+import {verifyAccess} from "../models/incidentModel.js";
 
 const router = express.Router();
 router.post('/', authMiddleware, createIncident);//create the incident
